@@ -11,12 +11,14 @@ class TestCaseService(ABC):
     def get(self, _id: str) -> TestCase:
         pass
 
+    # TODO: Considerar casos de teste sem atualização há de 6h como disponíveis
     @abstractmethod
     def get_first_available(self) -> Optional[TestCase]:
         """
         Retorna o primeiro caso de teste disponível para execução
         :return: Primeiro teste disponível, ou None, se não houver algum disponível
         """
+
         pass
 
     @abstractmethod
