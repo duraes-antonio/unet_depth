@@ -37,17 +37,21 @@ class TestCaseServiceMongoDB(TestCaseService):
         use_imagenet_weights = [False, True]
         test_cases: List[TestCase] = []
         initial_state = TestCaseState.Available
+        combinations = (
+            (net, back, opt, use_imgnet_weight)
+            for net in networks
+            for back in backbones
+            for opt in optimizers
+            for use_imgnet_weight in use_imagenet_weights
+        )
 
-        for net in networks:
-            for back in backbones:
-                for opt in optimizers:
-                    for use_imgnet in use_imagenet_weights:
-                        test_case = TestCase(
-                            network=net.value, backbone=back.value, optimizer=opt.value,
-                            created_at=datetime.utcnow(), state=initial_state.value,
-                            use_imagenet_weights=use_imgnet,
-                        )
-                        test_cases.append(test_case)
+        for net, back, opt, use_imgnet in combinations:
+            test_case = TestCase(
+                network=net.value, backbone=back.value, optimizer=opt.value,
+                created_at=datetime.utcnow(), state=initial_state.value,
+                use_imagenet_weights=use_imgnet,
+            )
+            test_cases.append(test_case)
         self.collection.insert_many(test_cases)
 
     def save(self, result: TestCase) -> TestCase:
