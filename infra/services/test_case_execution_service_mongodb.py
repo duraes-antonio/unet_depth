@@ -21,7 +21,8 @@ class TestCaseExecutionServiceMongoDB(TestCaseExecutionService):
 
     def save(self, result: TestCaseExecutionHistory) -> TestCaseExecutionHistory:
         result['created_at'] = datetime.utcnow()
-        self.collection.insert_one(result)
+        result_insert = self.collection.insert_one(result)
+        result['id'] = result_insert.inserted_id
         return result
 
     def get_last_execution(self, test_case_id: str) -> Optional[TestCaseExecutionHistory]:
