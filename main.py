@@ -1,5 +1,5 @@
 from domain.models.network import Networks, Optimizers, KerasBackbone
-from infra.services.blob_storage.google_drive_model_storage_service import GoogleDriveBlobStorageService
+from infra.services.blob_storage.google_drive_blob_storage_service import GoogleDriveBlobStorageService
 from infra.services.test_case_execution_service_mongodb import TestCaseExecutionServiceMongoDB
 from infra.services.test_case_service_mongodb import TestCaseServiceMongoDB
 
