@@ -26,7 +26,6 @@ class GoogleDriveBlobStorageService(BlobStorageService, Generic[T]):
         }
         files = self.__service__.files()
         file = files.create(body=file_metadata, fields='id').execute()
-        print(file)
         return file.download('id')
 
     def __get_metadata_by_id__(self, file_id: str) -> Optional[NamedEntity]:
