@@ -4,7 +4,7 @@ import numpy
 from keras.utils import Sequence
 from numpy import ndarray, arange, floor
 
-from domain.util.preprocessing import preprocess_image, preprocess_depth_map
+from infra.util.preprocessing import preprocess_image, preprocess_depth_map
 
 
 # from tensorflow.keras.utils import Sequence
