@@ -1,5 +1,5 @@
 import os
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import Optional, Iterable, List
 
 from bson import ObjectId
@@ -25,7 +25,23 @@ class TestCaseServiceMongoDB(TestCaseService):
         return self.__dict_to_object__(test_case)
 
     def get_first_available(self) -> Optional[TestCase]:
-        test_case: TestCase = self.collection.find_one({'state': TestCaseState.Available.value})
+        six_hours_ago = datetime.utcnow() - timedelta(hours=6)
+        query = {
+            '$or': [
+                {'state': TestCaseState.Available.value},
+                {
+                    '$or': [
+                        {
+                            'last_modified': {
+                                '$lte': six_hours_ago
+                            }
+                        },
+                        {'last_modified': None}
+                    ]
+                }
+            ],
+        }
+        test_case: TestCase = self.collection.find_one(query)
         return self.__dict_to_object__(test_case)
 
     def populate(
