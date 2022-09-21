@@ -19,5 +19,5 @@ def preprocess_depth_map(depth_map_path: str) -> ndarray:
     depth_map = cv2.cvtColor(depth_map, cv2.COLOR_BGR2GRAY)
     depth_map = depth_map.astype("float")
     depth_map = normalize_img(depth_map)
-    depth_map = reshape(depth_map, (width, height, 1))
+    depth_map = reshape(depth_map, (height, width, 1))
     return depth_map

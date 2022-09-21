@@ -46,14 +46,14 @@ class NyuV2Generator(Sequence):
 
     def __data_generation__(self, paths: Iterable[str]) -> Union[ndarray, Tuple[ndarray, ndarray]]:
         width, height = self.image_size
-        empty_batch = numpy.empty((self.batch_size, width, height, self.n_channels))
+        empty_batch = numpy.empty((self.batch_size, height, width, self.n_channels))
 
         if self.is_depth_map:
             for index, target_path in enumerate(paths):
                 empty_batch[index,] = preprocess_image(target_path)
             return empty_batch
 
-        target_depth_map = numpy.empty((self.batch_size, width, height, 1))
+        target_depth_map = numpy.empty((self.batch_size, height, width, 1))
 
         for index, target_path in enumerate(paths):
             empty_batch[index,] = preprocess_image(target_path)
