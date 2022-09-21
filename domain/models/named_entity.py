@@ -1,4 +1,6 @@
-from typing import TypeVar, TypedDict
+from typing import TypeVar
+
+from typing_extensions import TypedDict
 
 T = TypeVar('T')
 

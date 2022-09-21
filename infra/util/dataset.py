@@ -1,5 +1,7 @@
 import csv
-from typing import List, Tuple, Dict, MutableSequence, TypedDict
+from typing import List, Tuple, Dict, MutableSequence
+
+from typing_extensions import TypedDict
 
 
 class PartitionedDataset(TypedDict):
