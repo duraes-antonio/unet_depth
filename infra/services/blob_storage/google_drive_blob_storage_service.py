@@ -13,7 +13,7 @@ T = TypeVar('T')
 
 
 class GoogleDriveBlobStorageService(BlobStorageService, Generic[T]):
-    directory = 'models'
+    directory = 'unet_depth'
 
     def __init__(self):
         self.__credentials__ = GoogleDriveTokenManager().load_credentials()
@@ -65,13 +65,13 @@ class GoogleDriveBlobStorageService(BlobStorageService, Generic[T]):
         while not done:
             _, done = downloader.next_chunk()
 
-    def save(self, model_file_path: str) -> str:
+    def save(self, file_path: str) -> str:
         folder_id = self.__search_folder__(self.directory)
 
         if not folder_id:
             folder_id = self.__create_folder__(self.directory)
 
-        return self.__upload_file__(model_file_path, folder_id)
+        return self.__upload_file__(file_path, folder_id)
 
     def download_last(self) -> Optional[NamedEntity]:
         folder_id = self.__search_folder__(self.directory)
