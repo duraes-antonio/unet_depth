@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from typing import Optional, Iterable
 
 from domain.models.network import Networks, KerasBackbone, Optimizers
-from domain.models.test_case import TestCase
+from domain.models.test_case import TestCase, TestCaseState
 
 
 class TestCaseService(ABC):
@@ -22,7 +22,7 @@ class TestCaseService(ABC):
         pass
 
     @abstractmethod
-    def save(self, result: TestCase) -> TestCase:
+    def update_state(self, _id: str, state: TestCaseState) -> TestCase:
         pass
 
     @abstractmethod

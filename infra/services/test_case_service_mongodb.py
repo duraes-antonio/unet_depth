@@ -70,9 +70,16 @@ class TestCaseServiceMongoDB(TestCaseService):
             test_cases.append(test_case)
         self.collection.insert_many(test_cases)
 
-    def save(self, result: TestCase) -> TestCase:
-        self.collection.insert_one(result)
-        return result
+    def update_state(self, _id: str, state: TestCaseState) -> TestCase:
+        query = {'_id': _id}
+        update = {
+            'last_modified': datetime.utcnow(),
+            'state': state.value,
+        }
+        updated: TestCase = self.collection.find_one_and_update(query, {'$set': update})
+        updated['state'] = state
+        updated['last_modified'] = update['last_modified']
+        return self.__dict_to_object__(updated)
 
     def remove_all(self):
         self.collection.delete_many({})
