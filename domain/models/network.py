@@ -2,9 +2,9 @@ from enum import Enum
 
 
 class Networks(Enum):
-    AttentionUNet = 'attention_unet'
-    SwinUNet = 'swin_unet'
-    TransUNet = 'trans_unet'
+    AttentionUNet = 'attention-unet'
+    SwinUNet = 'swin-unet'
+    TransUNet = 'trans-unet'
     UNet = 'unet'
 
 
