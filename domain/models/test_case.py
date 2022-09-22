@@ -1,7 +1,6 @@
 from datetime import datetime
 from enum import Enum
-
-from typing_extensions import NotRequired
+from typing import Optional
 
 from domain.models.named_entity import Entity
 from domain.models.network import Networks, KerasBackbone, Optimizers
@@ -20,4 +19,4 @@ class TestCase(Entity):
     use_imagenet_weights: bool
     state: TestCaseState
     created_at: datetime
-    last_modified: NotRequired[datetime]
+    last_modified: Optional[datetime]
