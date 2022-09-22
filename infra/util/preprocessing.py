@@ -13,10 +13,12 @@ def preprocess_image(img_path: str) -> ndarray:
     return image
 
 
-def preprocess_depth_map(depth_map_path: str) -> ndarray:
+def preprocess_depth_map(depth_map_path: str, image_shape=(640, 480)) -> ndarray:
     depth_map: ndarray = cv2.imread(depth_map_path)
-    width, height = depth_map.shape
     depth_map = cv2.cvtColor(depth_map, cv2.COLOR_BGR2GRAY)
+    width, height = image_shape
+    print(depth_map.shape)
+
     depth_map = depth_map.astype("float")
     depth_map = normalize_img(depth_map)
     depth_map = reshape(depth_map, (height, width, 1))
