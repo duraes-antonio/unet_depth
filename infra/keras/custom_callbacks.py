@@ -1,4 +1,4 @@
-from keras import Model
+from tensorflow.keras import Model
 from tensorflow.python.keras.callbacks import Callback
 
 from domain.services.blob_storage_service import BlobStorageService
