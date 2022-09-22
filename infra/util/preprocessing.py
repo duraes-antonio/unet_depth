@@ -17,7 +17,6 @@ def preprocess_depth_map(depth_map_path: str, image_shape=(640, 480)) -> ndarray
     depth_map: ndarray = cv2.imread(depth_map_path)
     depth_map = cv2.cvtColor(depth_map, cv2.COLOR_BGR2GRAY)
     width, height = image_shape
-    print(depth_map.shape)
 
     depth_map = depth_map.astype("float")
     depth_map = normalize_img(depth_map)

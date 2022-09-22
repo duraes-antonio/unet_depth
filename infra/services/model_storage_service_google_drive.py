@@ -27,5 +27,4 @@ class ModelStorageServiceGoogleDrive(ModelStorageService):
         file_basic = self.storage_service.download(file_id)
 
         if file_basic:
-            print(file_basic)
             shutil.unpack_archive(file_basic['name'])
