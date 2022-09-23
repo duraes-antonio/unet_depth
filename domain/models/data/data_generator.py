@@ -12,7 +12,7 @@ class NyuV2Generator(Sequence):
     is_depth_map: bool
     batch_size: int
     n_channels: int
-    image_size: Tuple[int, int] = (640, 480)
+    image_size: Tuple[int, int] = (256, 256)
     indexes: ndarray
 
     def __init__(self, path_list: List[str], labels, batch_size=4, n_channels=3, shuffle=True, is_depth_map=False, seed=42):
