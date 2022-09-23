@@ -1,9 +1,8 @@
 from typing import Optional
 
 from cpuinfo import get_cpu_info
-from tensorflow.keras import Model
+from tensorflow import keras
 from tensorflow.python.client import device_lib
-from tensorflow.python.keras.callbacks import Callback
 
 from domain.models.test_case_execution_history import TestCaseExecutionHistory
 from domain.services.blob_storage_service import BlobStorageService
@@ -11,18 +10,7 @@ from domain.services.model_storage_service import ModelStorageService
 from domain.services.test_case_execution_service import TestCaseExecutionService
 
 
-class ExecutionInfo:
-    test_case_id: str
-    model_id: str
-    model_name: str
-
-    def __init__(self, test_id: str, model_id: str, model_name: str):
-        self.model_id = model_id
-        self.model_name = model_name
-        self.test_case_id = test_id
-
-
-class CSVResultsSave(Callback):
+class CSVResultsSave(keras.callbacks.Callback):
     def __init__(self, blob_storage_service: BlobStorageService = None, csv_log_path: str = None):
         super().__init__()
         self.blob_storage = blob_storage_service
@@ -41,7 +29,7 @@ class CSVResultsSave(Callback):
             print(f"Error on save CSV log: '{error}'")
 
 
-class TrainedModelSave(Callback):
+class TrainedModelSave(keras.callbacks.Callback):
     def __init__(
             self, model_storage: ModelStorageService,
             execution_service: TestCaseExecutionService,
@@ -59,7 +47,7 @@ class TrainedModelSave(Callback):
         print("End epoch {} of training; got log keys: {}".format(epoch, keys))
 
         try:
-            model: Model = self.model
+            model: keras.Model = self.model
             model.save(model.save(self.filename))
             file_id = self.model_storage.save(self.filename)
             print(f"Saved model! Name: '{self.filename} | Id: {file_id}'")
