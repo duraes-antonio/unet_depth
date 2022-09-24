@@ -1,4 +1,5 @@
 import csv
+from random import shuffle
 from typing import List, Tuple, Dict, MutableSequence
 
 from typing_extensions import TypedDict
@@ -35,9 +36,16 @@ def split_train_validation(
 def load_nyu_train_paths(
         train_csv_path: str,
         val_percent: 0.3,
-        seed: int
+        seed: int,
+        dataset_usage_percent: float = 1
 ) -> Tuple[PartitionedDataset, Dict[str, str]]:
     xy_paths_pairs = read_nyu_csv(train_csv_path)
+
+    if dataset_usage_percent < 1:
+        shuffle(xy_paths_pairs)
+        last_index = int(len(xy_paths_pairs) * dataset_usage_percent)
+        xy_paths_pairs = xy_paths_pairs[:last_index]
+
     y_path_by_x_path: Dict[str, str] = {x_path: y_path for x_path, y_path in xy_paths_pairs}
 
     x_paths = [x_path for x_path, y_path in xy_paths_pairs]
