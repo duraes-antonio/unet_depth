@@ -45,9 +45,9 @@ class GoogleDriveBlobStorageService(BlobStorageService, Generic[T]):
         folders = folders_dict['files']
         return folders[0]['id'] if folders else None
 
-    def __upload_file__(self, file_path: str, folder_id: str) -> str:
+    def __upload_file__(self, file_path: str, new_filename: Optional[str], folder_id: str) -> str:
         file_metadata = {
-            'name': Path(file_path).name,
+            'name': new_filename or Path(file_path).name,
             'parents': [folder_id]
         }
         media = MediaFileUpload(file_path, resumable=True)
@@ -65,13 +65,13 @@ class GoogleDriveBlobStorageService(BlobStorageService, Generic[T]):
         while not done:
             _, done = downloader.next_chunk()
 
-    def save(self, file_path: str) -> str:
+    def save(self, current_file_path: str, new_file_name: Optional[str] = None) -> str:
         folder_id = self.__search_folder__(self.directory)
 
         if not folder_id:
             folder_id = self.__create_folder__(self.directory)
 
-        return self.__upload_file__(file_path, folder_id)
+        return self.__upload_file__(current_file_path, new_file_name, folder_id)
 
     def download_last(self) -> Optional[NamedEntity]:
         folder_id = self.__search_folder__(self.directory)

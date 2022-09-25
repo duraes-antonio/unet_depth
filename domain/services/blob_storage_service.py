@@ -7,7 +7,7 @@ from domain.models.named_entity import NamedEntity
 class BlobStorageService(ABC):
 
     @abstractmethod
-    def save(self, file_path: str) -> str:
+    def save(self, current_file_path: str, new_file_name: Optional[str] = None) -> str:
         pass
 
     @abstractmethod
