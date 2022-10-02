@@ -64,7 +64,7 @@ class TrainedModelSaveRemote(keras.callbacks.Callback):
         file_id = None
 
         try:
-            file_id = self.model_storage.save(new_filename, None)
+            file_id = self.model_storage.save(self.filename, new_filename)
             print(f"Saved model! Name: '{new_filename} | Id: {file_id}'")
 
         except Exception as error:
