@@ -10,6 +10,15 @@ from domain.services.model_storage_service import ModelStorageService
 from domain.services.test_case_execution_service import TestCaseExecutionService
 
 
+class TestCallback(keras.callbacks.Callback):
+
+    def __init__(self, param):
+        self.p = param
+
+    def on_epoch_end(self, epoch, logs=None):
+        print(self.p)
+
+
 class CSVResultsSave(keras.callbacks.Callback):
     def __init__(self, blob_storage_service: BlobStorageService = None, csv_log_path: str = None):
         super().__init__()
