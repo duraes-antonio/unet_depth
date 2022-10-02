@@ -7,7 +7,7 @@ from googleapiclient.http import MediaFileUpload, MediaIoBaseDownload
 
 from domain.models.named_entity import NamedEntity
 from domain.services.blob_storage_service import BlobStorageService
-from infra.services.blob_storage.google_drive_auth import GoogleDriveTokenManager
+from infra.services.blob_storage.auth_google_drive import GoogleDriveTokenManager
 
 T = TypeVar('T')
 
