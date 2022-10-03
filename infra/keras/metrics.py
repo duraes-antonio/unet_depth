@@ -1,6 +1,7 @@
-import numpy
-import tensorflow.keras.backend as K
-from numpy import ndarray
+import tensorflow
+import tensorflow.python.keras.backend as k_backend
+from numpy import log10
+from tensorflow import Tensor
 
 
 def build_poly_decay(n_epochs: int, init_learning_rate: float):
@@ -13,14 +14,14 @@ def build_poly_decay(n_epochs: int, init_learning_rate: float):
     return poly_decay
 
 
-def depth_acc(y_true, y_predicted):
-    return K.mean(K.equal(K.round(y_true), K.round(y_predicted)))
+def depth_acc(ground_truth: Tensor, predicted: Tensor):
+    return k_backend.mean(k_backend.equal(k_backend.round(ground_truth), k_backend.round(predicted)))
 
 
 def build_threshold(delta: int = 1):
-    def threshold(ground_truth: ndarray, predicted: ndarray):
-        thresh = numpy.maximum((ground_truth / predicted), (predicted / ground_truth))
-        return (thresh < 1.25 ** delta).mean()
+    def threshold(ground_truth: Tensor, predicted: Tensor):
+        thresh = k_backend.maximum((ground_truth / predicted), (predicted / ground_truth))
+        return k_backend.mean(thresh < 1.25 ** delta)
 
     return threshold
 
@@ -37,24 +38,25 @@ def threshold_3():
     return build_threshold(3)
 
 
-def abs_rel(ground_truth: ndarray, predicted: ndarray):
-    return numpy.mean(numpy.abs(ground_truth - predicted) / ground_truth)
+def abs_rel(ground_truth: Tensor, predicted: Tensor):
+    return k_backend.mean(k_backend.abs(ground_truth - predicted) / ground_truth)
 
 
-def sq_rel(ground_truth: ndarray, predicted: ndarray):
-    return numpy.mean(((ground_truth - predicted) ** 2) / ground_truth)
+def sq_rel(ground_truth: Tensor, predicted: Tensor):
+    return k_backend.mean(((ground_truth - predicted) ** 2) / ground_truth)
 
 
-def rmse(ground_truth: ndarray, predicted: ndarray):
-    square_error = (ground_truth - predicted) ** 2
-    return numpy.sqrt(square_error.mean())
+def rmse(ground_truth: Tensor, predicted: Tensor):
+    square_error: Tensor = (ground_truth - predicted) ** 2
+    return k_backend.sqrt(k_backend.mean(square_error))
 
 
-def rmse_log(ground_truth: ndarray, predicted: ndarray):
-    square_log_error = (numpy.log(ground_truth) - numpy.log(predicted)) ** 2
-    return numpy.sqrt(square_log_error.mean())
+def rmse_log(ground_truth: Tensor, predicted: Tensor):
+    square_log_error = (k_backend.log(ground_truth) - k_backend.log(predicted)) ** 2
+    return k_backend.sqrt(k_backend.mean(square_log_error))
 
 
-def log_10(ground_truth: ndarray, predicted: ndarray):
-    diff_log_10 = numpy.log10(ground_truth) - numpy.log10(predicted)
-    return (numpy.abs(diff_log_10)).mean()
+def log_10(ground_truth: Tensor, predicted: Tensor):
+    diff_log_10 = log10(ground_truth) - log10(predicted)
+    diff_log_10_tensor = tensorflow.convert_to_tensor(diff_log_10)
+    return k_backend.mean(k_backend.abs(diff_log_10_tensor))
