@@ -1,7 +1,12 @@
 import tensorflow
 import tensorflow.python.keras.backend as k_backend
-from numpy import log10
 from tensorflow import Tensor
+
+
+def log10(value: Tensor):
+    numerator = k_backend.log(value)
+    denominator = k_backend.log(tensorflow.constant(10, dtype=numerator.dtype))
+    return numerator / denominator
 
 
 def build_poly_decay(n_epochs: int, init_learning_rate: float):
