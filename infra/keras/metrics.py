@@ -1,5 +1,5 @@
 import tensorflow
-import tensorflow.python.keras.backend as k_backend
+import tensorflow.keras.backend as k_backend
 from tensorflow import Tensor
 
 
@@ -31,16 +31,16 @@ def build_threshold(delta: int = 1):
     return threshold
 
 
-def threshold_1():
-    return build_threshold(1)
+def threshold_1(ground_truth: Tensor, predicted: Tensor):
+    return build_threshold(1)(ground_truth, predicted)
 
 
-def threshold_2():
-    return build_threshold(2)
+def threshold_2(ground_truth: Tensor, predicted: Tensor):
+    return build_threshold(2)(ground_truth, predicted)
 
 
-def threshold_3():
-    return build_threshold(3)
+def threshold_3(ground_truth: Tensor, predicted: Tensor):
+    return build_threshold(3)(ground_truth, predicted)
 
 
 def abs_rel(ground_truth: Tensor, predicted: Tensor):
