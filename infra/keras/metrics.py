@@ -21,7 +21,7 @@ def build_poly_decay(n_epochs: int, init_learning_rate: float):
 
 
 def depth_acc(ground_truth: Tensor, predicted: Tensor):
-    return tf_math.reduce_mean(tf_math.equal(tf_math.round(ground_truth), tf_math.round(predicted)))
+    return k_backend.mean(k_backend.equal(k_backend.round(ground_truth), k_backend.round(predicted)))
 
 
 def build_threshold(delta: int = 1):
