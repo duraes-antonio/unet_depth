@@ -1,7 +1,8 @@
 import tensorflow
+import tensorflow.keras.backend as k_backend
+from numpy import inf
 from tensorflow import Tensor
 from tensorflow import math as tf_math
-import tensorflow.keras.backend as k_backend
 
 
 def log10(value: Tensor):
@@ -47,18 +48,20 @@ def threshold_3(ground_truth: Tensor, predicted: Tensor):
 def abs_rel(ground_truth: Tensor, predicted: Tensor):
     gt_inf: Tensor[bool] = tf_math.is_inf(ground_truth)
     pred_inf: Tensor[bool] = tf_math.is_inf(predicted)
+    gt_np = ground_truth.numpy()
+    pred_np = ground_truth.numpy()
 
-    if True in gt_inf:
-        print('\nground_truth:', ground_truth)
+    if inf in gt_np:
+        print('\nground_truth:', gt_np)
 
-    if True in pred_inf:
-        print('\npred_inf:', pred_inf)
+    if inf in pred_np:
+        print('\npred_inf:', pred_np)
 
     abs_diff = tf_math.abs(ground_truth - predicted)
 
-    div_inf: Tensor[bool] = tf_math.is_inf(abs_diff / ground_truth)
+    div_np = (abs_diff / ground_truth).numpy()
 
-    if True in div_inf:
+    if True in div_np:
         print('\nabs_diff / ground_truth:', abs_diff / ground_truth)
 
     return tf_math.reduce_mean(abs_diff / ground_truth)
