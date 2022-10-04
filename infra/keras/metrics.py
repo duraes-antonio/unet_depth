@@ -1,6 +1,5 @@
 import tensorflow
 import tensorflow.keras.backend as k_backend
-from numpy import inf
 from tensorflow import Tensor
 from tensorflow import math as tf_math
 
@@ -51,11 +50,9 @@ def abs_rel(ground_truth: Tensor, predicted: Tensor):
     gt_np = ground_truth.numpy()
     pred_np = ground_truth.numpy()
 
-    if inf in gt_np:
-        print('\nground_truth:', gt_np)
-
-    if inf in pred_np:
-        print('\npred_inf:', pred_np)
+    tensorflow.print(gt_inf)
+    print('\n\n')
+    tensorflow.print(pred_inf)
 
     abs_diff = tf_math.abs(ground_truth - predicted)
 
