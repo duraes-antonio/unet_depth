@@ -1,12 +1,12 @@
 import tensorflow
-import tensorflow.keras.backend as k_backend
 from tensorflow import Tensor
+from tensorflow import math as tf_math
 
 
 def log10(value: Tensor):
-    numerator = k_backend.log(value)
-    denominator = k_backend.log(tensorflow.constant(10, dtype=numerator.dtype))
-    return numerator / denominator
+    log_numerator = tf_math.log(value)
+    log_denominator = tf_math.log(tensorflow.constant(10, dtype=log_numerator.dtype))
+    return log_numerator / log_denominator
 
 
 def build_poly_decay(n_epochs: int, init_learning_rate: float):
@@ -20,13 +20,13 @@ def build_poly_decay(n_epochs: int, init_learning_rate: float):
 
 
 def depth_acc(ground_truth: Tensor, predicted: Tensor):
-    return k_backend.mean(k_backend.equal(k_backend.round(ground_truth), k_backend.round(predicted)))
+    return tf_math.reduce_mean(tf_math.equal(tf_math.round(ground_truth), tf_math.round(predicted)))
 
 
 def build_threshold(delta: int = 1):
     def threshold(ground_truth: Tensor, predicted: Tensor):
-        thresh = k_backend.maximum((ground_truth / predicted), (predicted / ground_truth))
-        return k_backend.mean(thresh < 1.25 ** delta)
+        thresh = tf_math.maximum((ground_truth / predicted), (predicted / ground_truth))
+        return tf_math.reduce_mean(thresh < 1.25 ** delta)
 
     return threshold
 
@@ -44,24 +44,42 @@ def threshold_3(ground_truth: Tensor, predicted: Tensor):
 
 
 def abs_rel(ground_truth: Tensor, predicted: Tensor):
-    return k_backend.mean(k_backend.abs(ground_truth - predicted) / ground_truth)
+    gt_inf: Tensor[bool] = tf_math.is_inf(ground_truth)
+    pred_inf: Tensor[bool] = tf_math.is_inf(predicted)
+
+    if True in gt_inf:
+        print('\nground_truth:', ground_truth)
+
+    if True in pred_inf:
+        print('\npred_inf:', pred_inf)
+
+    abs_diff = tf_math.abs(ground_truth - predicted)
+
+    div_inf: Tensor[bool] = tf_math.is_inf(abs_diff / ground_truth)
+
+    if True in div_inf:
+        print('\nabs_diff / ground_truth:', abs_diff / ground_truth)
+
+    return tf_math.reduce_mean(abs_diff / ground_truth)
 
 
 def sq_rel(ground_truth: Tensor, predicted: Tensor):
-    return k_backend.mean(((ground_truth - predicted) ** 2) / ground_truth)
+    squared_diff = tf_math.squared_difference(ground_truth, predicted)
+    return tf_math.reduce_mean(squared_diff / ground_truth)
 
 
 def rmse(ground_truth: Tensor, predicted: Tensor):
-    square_error: Tensor = (ground_truth - predicted) ** 2
-    return k_backend.sqrt(k_backend.mean(square_error))
+    squared_error: Tensor = tf_math.squared_difference(ground_truth, predicted)
+    return tf_math.sqrt(tf_math.reduce_mean(squared_error))
 
 
 def rmse_log(ground_truth: Tensor, predicted: Tensor):
-    square_log_error = (k_backend.log(ground_truth) - k_backend.log(predicted)) ** 2
-    return k_backend.sqrt(k_backend.mean(square_log_error))
+    gt_log = tf_math.log(ground_truth)
+    predicted_log = tf_math.log(predicted)
+    squared_log_error = tf_math.squared_difference(gt_log, predicted_log)
+    return tf_math.sqrt(tf_math.reduce_mean(squared_log_error))
 
 
 def log_10(ground_truth: Tensor, predicted: Tensor):
     diff_log_10 = log10(ground_truth) - log10(predicted)
-    diff_log_10_tensor = tensorflow.convert_to_tensor(diff_log_10)
-    return k_backend.mean(k_backend.abs(diff_log_10_tensor))
+    return tf_math.reduce_mean(tf_math.abs(diff_log_10))
