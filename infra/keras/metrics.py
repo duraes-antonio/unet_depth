@@ -1,6 +1,7 @@
 import tensorflow
 from tensorflow import Tensor
 from tensorflow import math as tf_math
+import tensorflow.keras.backend as k_backend
 
 
 def log10(value: Tensor):
