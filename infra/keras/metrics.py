@@ -29,7 +29,7 @@ def depth_acc(ground_truth: Tensor, predicted: Tensor):
 def build_threshold(delta: int = 1):
     def threshold(ground_truth: Tensor, predicted: Tensor):
         thresh = tf_math.maximum((ground_truth / predicted), (predicted / ground_truth))
-        return tf_math.reduce_mean(thresh < 1.25 ** delta)
+        return k_backend.mean(thresh < 1.25 ** delta)
 
     return threshold
 
