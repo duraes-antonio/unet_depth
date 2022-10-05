@@ -60,7 +60,7 @@ def abs_rel(ground_truth: Tensor, predicted: Tensor):
 
     div_np = np.array(tensorflow.get_static_value(abs_diff / ground_truth))
 
-    if True in div_np:
+    if inf in div_np:
         print('\nabs_diff / ground_truth:', abs_diff / ground_truth)
 
     return tf_math.reduce_mean(abs_diff / ground_truth)
