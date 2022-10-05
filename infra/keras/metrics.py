@@ -8,7 +8,7 @@ from tensorflow import math as tf_math
 
 def log10(value: Tensor):
     log_numerator = tf_math.log(value)
-    log_denominator = tf_math.log(tensorflow.constant(10, dtype=log_numerator.dtype))
+    log_denominator = tf_math.log(tf.constant(10, dtype=log_numerator.dtype))
     return log_numerator / log_denominator
 
 
