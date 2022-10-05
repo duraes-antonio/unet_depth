@@ -1,5 +1,7 @@
+import numpy as np
 import tensorflow
 import tensorflow.keras.backend as k_backend
+from numpy import inf
 from tensorflow import Tensor
 from tensorflow import math as tf_math
 
@@ -45,18 +47,18 @@ def threshold_3(ground_truth: Tensor, predicted: Tensor):
 
 
 def abs_rel(ground_truth: Tensor, predicted: Tensor):
-    gt_inf: Tensor[bool] = tf_math.is_inf(ground_truth)
-    pred_inf: Tensor[bool] = tf_math.is_inf(predicted)
-    gt_np = ground_truth.numpy()
-    pred_np = ground_truth.numpy()
+    gt_np = np.array(tensorflow.get_static_value(ground_truth))
+    pred_np = np.array(tensorflow.get_static_value(ground_truth))
 
-    tensorflow.print(gt_inf)
-    print('\n\n')
-    tensorflow.print(pred_inf)
+    if inf in gt_np:
+        print('\nground_truth:', gt_np)
+
+    if inf in pred_np:
+        print('\npred_inf:', pred_np)
 
     abs_diff = tf_math.abs(ground_truth - predicted)
 
-    div_np = (abs_diff / ground_truth).numpy()
+    div_np = np.array(tensorflow.get_static_value(abs_diff / ground_truth))
 
     if True in div_np:
         print('\nabs_diff / ground_truth:', abs_diff / ground_truth)
