@@ -31,7 +31,6 @@ class CSVResultsSave(keras.callbacks.Callback):
 
         try:
             self.blob_storage.save(self.csv_log_path, csv_new_name)
-            print(f'\nLOG PATH: {self.csv_log_path}', f'\nNEW NAME: {csv_new_name}')
             print(f"Saved CSV log: '{csv_new_name}'")
 
         except Exception as error:
