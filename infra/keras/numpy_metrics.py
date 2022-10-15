@@ -40,45 +40,45 @@ def build_threshold(delta: int = 1):
     return threshold
 
 
-def threshold_1(ground_truth: Tensor, predicted: Tensor) -> ndarray:
+def np_threshold_1(ground_truth: Tensor, predicted: Tensor) -> ndarray:
     return build_threshold(1)(ground_truth, predicted)
 
 
-def threshold_2(ground_truth: Tensor, predicted: Tensor) -> ndarray:
+def np_threshold_2(ground_truth: Tensor, predicted: Tensor) -> ndarray:
     return build_threshold(2)(ground_truth, predicted)
 
 
-def threshold_3(ground_truth: Tensor, predicted: Tensor) -> ndarray:
+def np_threshold_3(ground_truth: Tensor, predicted: Tensor) -> ndarray:
     return build_threshold(3)(ground_truth, predicted)
 
 
-def rmse(ground_truth: Tensor, predicted: Tensor) -> ndarray:
+def np_rmse(ground_truth: Tensor, predicted: Tensor) -> ndarray:
     gt, prediction = tensors_to_array(ground_truth, predicted)
     prediction = normalize_tensor(prediction)
     squared_diff: ndarray = (gt - prediction) ** 2
     return np.sqrt(squared_diff.mean())
 
 
-def rmse_log(ground_truth: Tensor, predicted: Tensor) -> Tensor:
+def np_rmse_log(ground_truth: Tensor, predicted: Tensor) -> Tensor:
     gt, prediction = tensors_to_array(ground_truth, predicted)
     prediction = normalize_tensor(prediction)
     squared_diff_log: ndarray = (np.log(gt) - np.log(prediction)) ** 2
     return np.sqrt(squared_diff_log.mean())
 
 
-def abs_rel(ground_truth: Tensor, predicted: Tensor) -> ndarray:
+def np_abs_rel(ground_truth: Tensor, predicted: Tensor) -> ndarray:
     gt, prediction = tensors_to_array(ground_truth, predicted)
     prediction = normalize_tensor(prediction)
     return np.mean(np.abs(gt - prediction) / gt)
 
 
-def sq_rel(ground_truth: Tensor, predicted: Tensor) -> ndarray:
+def np_sq_rel(ground_truth: Tensor, predicted: Tensor) -> ndarray:
     gt, prediction = tensors_to_array(ground_truth, predicted)
     prediction = normalize_tensor(prediction)
     return np.mean(((gt - prediction) ** 2) / gt)
 
 
-def log_10(ground_truth: Tensor, predicted: Tensor) -> ndarray:
+def np_log_10(ground_truth: Tensor, predicted: Tensor) -> ndarray:
     gt, prediction = tensors_to_array(ground_truth, predicted)
     prediction = normalize_tensor(prediction)
     return (np.abs(np.log10(gt) - np.log10(prediction))).mean()
