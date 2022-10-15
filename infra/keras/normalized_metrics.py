@@ -4,12 +4,12 @@ import tensorflow.keras.backend as k_backend
 from tensorflow import Tensor
 from tensorflow import math as tf_math
 
-MIN_DEPTH = 1e-3
-MAX_DEPTH = 80
+MIN_DEPTH = tf.constant(1e-3)
+MAX_DEPTH = tf.constant(80.00)
 
 
 def normalize_min(value: Tensor) -> Tensor:
-    return tf.where(tf.less(value, 0), MIN_DEPTH, value)
+    return tf.where(tf.less(value, tf.constant(0.0)), MIN_DEPTH, value)
 
 
 def normalize_max(value: Tensor) -> Tensor:
