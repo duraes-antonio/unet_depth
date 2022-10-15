@@ -10,15 +10,11 @@ MAX_DEPTH = tf.constant(80.00)
 
 
 def normalize_min(value: Tensor) -> Tensor:
-    return tf.where(tf.less(value, tf.constant(0.0)), MIN_DEPTH, value)
+    return tf.where(tf.less(value, MIN_DEPTH), MIN_DEPTH, value)
 
 
 def normalize_max(value: Tensor) -> Tensor:
     return tf.where(tf.greater(value, MAX_DEPTH), MAX_DEPTH, value)
-
-
-def remove_zero(value: Tensor) -> Tensor:
-    return tf.boolean_mask(value, tf.greater(value, 0.0))
 
 
 def normalize_tensor(value: Tensor) -> Tensor:
@@ -35,7 +31,7 @@ def normalize_tensors(ground_truth: Tensor, prediction: Tensor) -> Tuple[Tensor,
     gt_mask = tf.greater(ground_truth, 0.0)
     prediction_masked = tf.boolean_mask(prediction, gt_mask)
     gt_masked = tf.boolean_mask(ground_truth, gt_mask)
-    return normalize_tensor(gt_masked), normalize_tensor(prediction_masked)
+    return gt_masked, normalize_tensor(prediction_masked)
 
 
 def log10(value: Tensor) -> Tensor:
