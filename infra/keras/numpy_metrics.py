@@ -1,7 +1,7 @@
 from typing import Tuple
 
 import numpy as np
-import tensorflow as tf
+import tensorflow.experimental.numpy as numpy
 from numpy import ndarray
 from tensorflow import Tensor
 
@@ -25,8 +25,8 @@ def tensors_to_array(
     :param prediction: Prediction tensor
     :return: Tuple with ground truth, prediction ndarrays
     """
-    prediction_np = tf.get_static_value(prediction)
-    gt_np = tf.get_static_value(ground_truth)
+    prediction_np = numpy.asarray(prediction)
+    gt_np = numpy.asarray(ground_truth)
     print("[NUMPY] prediction", prediction_np)
     print("[TENSOR] prediction", prediction)
 
