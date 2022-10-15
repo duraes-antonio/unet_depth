@@ -1,3 +1,5 @@
+from typing import Tuple
+
 import tensorflow as tf
 import tensorflow.keras.backend as k_backend
 
@@ -16,8 +18,23 @@ def normalize_max(value: Tensor) -> Tensor:
     return tf.where(tf.greater(value, MAX_DEPTH), MAX_DEPTH, value)
 
 
+def remove_zero(value: Tensor) -> Tensor:
+    return tf.boolean_mask(value, tf.greater(value, 0.0))
+
+
 def normalize_tensor(value: Tensor) -> Tensor:
-    return normalize_max(normalize_min(value))
+    without_zero = remove_zero(value)
+    return normalize_max(normalize_min(without_zero))
+
+
+def normalize_tensors(ground_truth: Tensor, prediction: Tensor) -> Tuple[Tensor, Tensor]:
+    """
+    Convert ground truth and prediction tensors to ndarray pair
+    :param ground_truth: GT tensor
+    :param prediction: Prediction tensor
+    :return: Tuple with ground truth, prediction ndarrays
+    """
+    return remove_zero(ground_truth), normalize_tensor(prediction)
 
 
 def log10(value: Tensor) -> Tensor:
@@ -28,10 +45,10 @@ def log10(value: Tensor) -> Tensor:
 
 def build_threshold(delta: int = 1):
     def threshold(ground_truth: Tensor, predicted: Tensor):
-        normalized_prediction = normalize_tensor(predicted)
+        gt, predict = normalize_tensors(ground_truth, predicted)
         thresh = tf_math.maximum(
-            (ground_truth / normalized_prediction),
-            (normalized_prediction / ground_truth)
+            (gt / predict),
+            (predict / gt)
         )
         return k_backend.mean(thresh < 1.25 ** delta)
 
@@ -51,34 +68,34 @@ def threshold_3(ground_truth: Tensor, predicted: Tensor) -> Tensor:
 
 
 def abs_rel(ground_truth: Tensor, predicted: Tensor) -> Tensor:
-    normalized_prediction = normalize_tensor(predicted)
-    abs_diff = tf_math.abs(ground_truth - normalized_prediction)
-    return tf_math.reduce_mean(abs_diff / ground_truth)
+    gt, predict = normalize_tensors(ground_truth, predicted)
+    abs_diff = tf_math.abs(gt - predict)
+    return tf_math.reduce_mean(abs_diff / gt)
 
 
 def sq_rel(ground_truth: Tensor, predicted: Tensor) -> Tensor:
-    normalized_prediction = normalize_tensor(predicted)
-    squared_diff = tf_math.squared_difference(ground_truth, normalized_prediction)
-    return tf_math.reduce_mean(squared_diff / ground_truth)
+    gt, predict = normalize_tensors(ground_truth, predicted)
+    squared_diff = tf_math.squared_difference(gt, predict)
+    return tf_math.reduce_mean(squared_diff / gt)
 
 
 def rmse(ground_truth: Tensor, predicted: Tensor) -> Tensor:
-    normalized_prediction = normalize_tensor(predicted)
-    squared_error = tf_math.squared_difference(ground_truth, normalized_prediction)
+    gt, predict = normalize_tensors(ground_truth, predicted)
+    squared_error = tf_math.squared_difference(gt, predict)
     return tf_math.sqrt(tf_math.reduce_mean(squared_error))
 
 
 def rmse_log(ground_truth: Tensor, predicted: Tensor) -> Tensor:
-    normalized_prediction = normalize_tensor(predicted)
+    gt, predict = normalize_tensors(ground_truth, predicted)
 
-    gt_log = tf_math.log(ground_truth)
-    predicted_log = tf_math.log(normalized_prediction)
+    gt_log = tf_math.log(gt)
+    predicted_log = tf_math.log(predict)
 
     squared_log_error = tf_math.squared_difference(gt_log, predicted_log)
     return tf_math.sqrt(tf_math.reduce_mean(squared_log_error))
 
 
 def log_10(ground_truth: Tensor, predicted: Tensor) -> Tensor:
-    normalized_prediction = normalize_tensor(predicted)
-    diff_log_10 = log10(ground_truth) - log10(normalized_prediction)
+    gt, predict = normalize_tensors(ground_truth, predicted)
+    diff_log_10 = log10(gt) - log10(predict)
     return tf_math.reduce_mean(tf_math.abs(diff_log_10))
