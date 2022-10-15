@@ -69,8 +69,9 @@ def threshold_3(ground_truth: Tensor, predicted: Tensor) -> Tensor:
 
 def abs_rel(ground_truth: Tensor, predicted: Tensor) -> Tensor:
     gt, predict = normalize_tensors(ground_truth, predicted)
-    print('GT', gt, gt.shape)
-    print('PREDICT', predict, predict.shape)
+    tf.print(gt)
+    print('GT\n\n\nPREDICT')
+    tf.print(predict)
     abs_diff = tf_math.abs(gt - predict)
     return tf_math.reduce_mean(abs_diff / gt)
 
