@@ -25,8 +25,8 @@ def tensors_to_array(
     :param prediction: Prediction tensor
     :return: Tuple with ground truth, prediction ndarrays
     """
-    prediction_np = tf.make_ndarray(prediction)
-    gt_np = tf.make_ndarray(ground_truth)
+    prediction_np = tf.make_ndarray(tf.make_tensor_proto(prediction))
+    gt_np = tf.make_ndarray(tf.make_tensor_proto(ground_truth))
     print("[NUMPY] prediction", prediction_np)
     print("[TENSOR] prediction", prediction)
 
