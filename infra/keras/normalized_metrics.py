@@ -32,7 +32,10 @@ def normalize_tensors(ground_truth: Tensor, prediction: Tensor) -> Tuple[Tensor,
     :param prediction: Prediction tensor
     :return: Tuple with ground truth, prediction ndarrays
     """
-    return normalize_tensor(ground_truth), normalize_tensor(prediction)
+    gt_mask = tf.greater(ground_truth, 0.0)
+    prediction_masked = tf.boolean_mask(prediction, gt_mask)
+    gt_masked = tf.boolean_mask(ground_truth, gt_mask)
+    return normalize_tensor(gt_masked), normalize_tensor(prediction_masked)
 
 
 def log10(value: Tensor) -> Tensor:
