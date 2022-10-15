@@ -27,6 +27,11 @@ def tensors_to_array(
     """
     prediction_np = tf.get_static_value(prediction)
     gt_np = tf.get_static_value(ground_truth)
+    print("[NUMPY] prediction", prediction_np)
+    print("[TENSOR] prediction", prediction)
+
+    print("[NUMPY] ground_truth", gt_np)
+    print("[TENSOR] ground_truth", ground_truth)
     return gt_np, prediction_np
 
 
