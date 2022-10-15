@@ -70,6 +70,8 @@ def abs_rel(ground_truth: Tensor, predicted: Tensor) -> Tensor:
     tf.print(gt.shape)
     print('GT\n\n\nPREDICT')
     tf.print(predict.shape)
+
+    print(f'\n\n\nGT: {type(gt)}\nPREDICT: {type(predict)}\n\n\n')
     abs_diff = tf_math.abs(gt - predict)
     return tf_math.reduce_mean(abs_diff / gt)
 
