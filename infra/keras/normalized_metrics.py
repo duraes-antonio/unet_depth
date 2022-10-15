@@ -2,7 +2,6 @@ from typing import Tuple
 
 import tensorflow as tf
 import tensorflow.keras.backend as k_backend
-
 from tensorflow import Tensor
 from tensorflow import math as tf_math
 
@@ -23,8 +22,7 @@ def remove_zero(value: Tensor) -> Tensor:
 
 
 def normalize_tensor(value: Tensor) -> Tensor:
-    without_zero = remove_zero(value)
-    return normalize_max(normalize_min(without_zero))
+    return normalize_max(normalize_min(value))
 
 
 def normalize_tensors(ground_truth: Tensor, prediction: Tensor) -> Tuple[Tensor, Tensor]:
@@ -34,7 +32,7 @@ def normalize_tensors(ground_truth: Tensor, prediction: Tensor) -> Tuple[Tensor,
     :param prediction: Prediction tensor
     :return: Tuple with ground truth, prediction ndarrays
     """
-    return remove_zero(ground_truth), normalize_tensor(prediction)
+    return normalize_tensor(ground_truth), normalize_tensor(prediction)
 
 
 def log10(value: Tensor) -> Tensor:
@@ -69,9 +67,9 @@ def threshold_3(ground_truth: Tensor, predicted: Tensor) -> Tensor:
 
 def abs_rel(ground_truth: Tensor, predicted: Tensor) -> Tensor:
     gt, predict = normalize_tensors(ground_truth, predicted)
-    tf.print(gt)
+    tf.print(gt.shape)
     print('GT\n\n\nPREDICT')
-    tf.print(predict)
+    tf.print(predict.shape)
     abs_diff = tf_math.abs(gt - predict)
     return tf_math.reduce_mean(abs_diff / gt)
 
