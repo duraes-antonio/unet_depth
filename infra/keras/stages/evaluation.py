@@ -8,11 +8,11 @@ from domain.services.blob_storage_service import BlobStorageService
 def __save_csv__(blob_storage: BlobStorageService, filename: str):
     try:
         blob_storage.save(filename)
-        print(f"Saved CSV log: '{filename}'")
+        print(f"\n\nSaved CSV log: '{filename}'")
 
     except Exception as error:
         print(error)
-        print(f"Error on save CSV log: '{error}'")
+        print(f"\n\nError on save CSV log: '{error}'")
 
 
 def evaluate(

@@ -31,11 +31,11 @@ class CSVResultsSave(keras.callbacks.Callback):
 
         try:
             self.blob_storage.save(self.csv_log_path, csv_new_name)
-            print(f"Saved CSV log: '{csv_new_name}'")
+            print(f"\n\nSaved CSV log: '{csv_new_name}'")
 
         except Exception as error:
             print(error)
-            print(f"Error on save CSV log: '{error}'")
+            print(f"\n\nError on save CSV log: '{error}'")
 
 
 class TrainedModelSaveRemote(keras.callbacks.Callback):
@@ -64,11 +64,11 @@ class TrainedModelSaveRemote(keras.callbacks.Callback):
 
         try:
             file_id = self.model_storage.save(self.filename, new_filename)
-            print(f"Saved model! Name: '{new_filename} | Id: {file_id}'")
+            print(f"\n\nSaved model! Name: '{new_filename} | Id: {file_id}'")
 
         except Exception as error:
             print(error)
-            print(f"Error on save keras model: '{error}'")
+            print(f"\n\nError on save keras model: '{error}'")
 
         try:
             data: TestCaseExecutionHistory = {
@@ -81,11 +81,11 @@ class TrainedModelSaveRemote(keras.callbacks.Callback):
             }
             self.execution_service.save(data)
             self.test_case_service.update_state(self.test_case_id, TestCaseState.Busy)
-            print(f"Execution item saved!")
+            print(f"\n\nExecution item saved!")
 
         except Exception as error:
             print(error)
-            print(f"Error on update execution history: '{error}'")
+            print(f"\n\nError on update execution history: '{error}'")
 
     def __get_cpu_info__(self) -> dict:
         cpu_info = get_cpu_info()
