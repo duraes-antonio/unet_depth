@@ -58,6 +58,6 @@ class NyuV2Generator(keras.utils.Sequence):
         target_depth_map = numpy.empty((self.batch_size, height, width, 1))
 
         for index, (x_path, y_path) in enumerate(paths_pairs):
-            empty_batch[index,] = preprocess_image(x_path)
-            target_depth_map[index,] = preprocess_depth_map(y_path)
+            empty_batch[index,] = preprocess_image(x_path, self.image_size)
+            target_depth_map[index,] = preprocess_depth_map(y_path, self.image_size)
         return empty_batch, target_depth_map

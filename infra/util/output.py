@@ -11,7 +11,7 @@ from infra.util.dataset import PathPairs
 
 
 def print_test_case(test_case: TestCase):
-    title = '-' * 10 + 'CASO DE TESTE' + '-' * 10
+    title = '-' * 10 + 'PROCESSANDO CASO DE TESTE' + '-' * 10
     output = f"""
 {title}
 ID:             {test_case['id']}
