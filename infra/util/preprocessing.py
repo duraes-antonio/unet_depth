@@ -18,7 +18,7 @@ def preprocess_image(img_path: str) -> ndarray:
 
 
 def preprocess_depth_map(depth_map_path: str) -> ndarray:
-    depth_map: ndarray = cv2.imread(depth_map_path)
+    depth_map: ndarray = cv2.imread(depth_map_path, cv2.IMREAD_ANYDEPTH)
     depth_map = cv2.cvtColor(depth_map, cv2.COLOR_BGR2GRAY)
     depth_map = cv2.resize(depth_map, DEFAULT_SIZE, interpolation=cv2.INTER_AREA)
 
