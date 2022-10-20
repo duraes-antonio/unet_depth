@@ -31,7 +31,7 @@ class ApplicationManager:
             execution_service: TestCaseExecutionService,
             test_case_service: TestCaseService,
             size: Tuple[int, int] = (256, 256),
-            epochs: int = 20
+            epochs: int = 20,
     ):
         self.__blob_storage__ = blob_storage
         self.__model_storage__ = model_storage
@@ -73,7 +73,7 @@ class ApplicationManager:
             test_case, last_execution, self.__blob_storage__, self.__model_storage__,
             self.__execution_service__, self.__test_case_service__
         )
-        last_epoch = last_execution['last_epoch'] + 1 if last_execution else 0
+        last_epoch = last_execution['last_epoch'] if last_execution else 0
         remaining_epochs = self.__max_epochs__ - last_epoch
         self.model.fit(
             self.training_generator, validation_data=self.validation_generator,
@@ -85,9 +85,10 @@ class ApplicationManager:
 
     def prepare_train_data(
             self, csv_train_path: str, batch_size=8, shuffle=False, seed=42,
+            dataset_usage: float = 1
     ) -> 'ApplicationManager':
         partition = load_nyu_train_paths(
-            csv_train_path, val_percent=0.3, seed=seed, dataset_usage_percent=1
+            csv_train_path, val_percent=0.3, seed=seed, dataset_usage_percent=dataset_usage
         )
         self.training_generator = NyuV2Generator(
             partition['train'], batch_size, shuffle=shuffle, seed=seed,
