@@ -34,7 +34,7 @@ def plot_image_comparison(
     :param xy_path_pairs: List of path pairs (input path, ground truth path)
     """
     images_name = [Path(x_path).name for x_path, y_path in xy_path_pairs]
-    test_generator = NyuV2Generator(xy_path_pairs, shuffle=False)
+    test_generator = NyuV2Generator(xy_path_pairs, batch_size=1, shuffle=False)
     color_map = plot.get_cmap('inferno_r')
 
     def plot_depth_map(depth_map: ndarray, title: str, col_number: int):
@@ -43,7 +43,13 @@ def plot_image_comparison(
         plot.imshow(_depth_map, cmap=color_map)
         plot_axis.set_title(title)
 
-    for image_name, (x, y) in zip(images_name, test_generator):
+    for image_name, item in zip(images_name, test_generator):
+        x, y = item
+        print(x)
+        print(y)
+        print(item)
+        print(item.shape)
+
         plot.figure(figsize=(16, 16), dpi=72)
         predicted = model.predict(x)
 
