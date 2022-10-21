@@ -33,7 +33,7 @@ def evaluate(
         'threshold_2',
         'threshold_3'
     ]
-    metrics_dict = {name: value for name, value in zip(metric_names, metric_values)}
+    metrics_dict = {name: [value] for name, value in zip(metric_names, metric_values)}
     dataframe = pandas.DataFrame(metrics_dict)
 
     filename = csv_name.replace('.csv', '_test.csv')
