@@ -1,4 +1,4 @@
-from typing import Tuple
+from typing import Tuple, Callable
 
 from tensorflow import keras
 
@@ -109,7 +109,7 @@ class ApplicationManager:
         )
         return self
 
-    def run(self) -> None:
+    def run(self, after_test_callback: Callable[[keras.Model], None]) -> None:
         test_case = self.__test_case_service__.get_first_available()
 
         while test_case:
@@ -164,5 +164,7 @@ Nome: {model_name}
             print(f"Caso de teste finalizado! ID {test_case_id}")
 
             test_case = self.__test_case_service__.get_first_available()
+
+            after_test_callback(self.model)
 
         print('Não há casos de testes para executar!')
