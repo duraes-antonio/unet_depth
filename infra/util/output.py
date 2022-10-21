@@ -43,12 +43,8 @@ def plot_image_comparison(
         plot.imshow(_depth_map, cmap=color_map)
         plot_axis.set_title(title)
 
-    for image_name, item in zip(images_name, test_generator):
-        x, y = item
-        print(x)
-        print(y)
-        print(item)
-        print(item.shape)
+    for image_name, (x, y) in zip(images_name, test_generator):
+        x, y = numpy.squeeze(x), numpy.squeeze(y)
 
         plot.figure(figsize=(16, 16), dpi=72)
         predicted = model.predict(x)
