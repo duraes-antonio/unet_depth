@@ -163,4 +163,6 @@ Nome: {model_name}
             self.__test_case_service__.update_state(test_case['id'], TestCaseState.Done)
             print(f"Caso de teste finalizado! ID {test_case_id}")
 
+            test_case = self.__test_case_service__.get_first_available()
+
         print('Não há casos de testes para executar!')
