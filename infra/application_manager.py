@@ -1,3 +1,4 @@
+import gc
 from typing import Tuple, Callable
 
 from tensorflow import keras
@@ -154,10 +155,12 @@ Nome: {model_name}
 
             print('Iniciado: treinamento')
             self.__train__(test_case, last_execution)
+            gc.collect()
             print('Finalizado: treinamento')
 
             print('Iniciado: teste')
             self.__test__(model_name)
+            gc.collect()
             print('Finalizado: teste')
 
             self.__test_case_service__.update_state(test_case['id'], TestCaseState.Done)
