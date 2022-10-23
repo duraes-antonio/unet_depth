@@ -69,6 +69,7 @@ class TrainedModelSaveRemote(keras.callbacks.Callback):
         except Exception as error:
             print(error)
             print(f"\n\nError on save keras model: '{error}'")
+            exit(1)
 
         try:
             data: TestCaseExecutionHistory = {
@@ -86,6 +87,7 @@ class TrainedModelSaveRemote(keras.callbacks.Callback):
         except Exception as error:
             print(error)
             print(f"\n\nError on update execution history: '{error}'")
+            exit(1)
 
     def __get_cpu_info__(self) -> dict:
         cpu_info = get_cpu_info()
