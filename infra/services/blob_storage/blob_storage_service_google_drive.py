@@ -64,7 +64,8 @@ class GoogleDriveBlobStorageService(BlobStorageService, Generic[T]):
 
         if model_id:
             file = self.__service__.files().update(
-                fileId=model_id, body=file_metadata, media_body=media, fields='id'
+                fileId=model_id, body={'name': file_metadata['name']},
+                media_body=media, fields='id'
             ).execute()
 
         else:
