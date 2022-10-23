@@ -6,7 +6,7 @@ from keras import Model
 from numpy import ndarray
 
 from domain.models.data.data_generator import NyuV2Generator
-from domain.models.test_case import TestCase
+from domain.models.test_case.test_case import TestCase
 from infra.util.dataset import PathPairs
 
 

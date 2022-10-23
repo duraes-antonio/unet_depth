@@ -4,7 +4,7 @@ from keras_unet_collection import models
 from tensorflow import keras
 
 from domain.models.network import Networks
-from domain.models.test_case import TestCase
+from domain.models.test_case.test_case import TestCase
 
 
 # Instanciar modelo com base no caso de teste

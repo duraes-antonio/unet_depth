@@ -6,7 +6,7 @@ import pymongo
 from dotenv import load_dotenv
 from pymongo import MongoClient
 
-from domain.models.test_case_execution_history import TestCaseExecutionHistory
+from domain.models.test_case.test_case_execution_history import TestCaseExecutionHistory
 from domain.services.test_case_execution_service import TestCaseExecutionService
 
 load_dotenv()
@@ -17,7 +17,7 @@ class TestCaseExecutionServiceMongoDB(TestCaseExecutionService):
     def __init__(self, db_name):
         self.db_client = MongoClient(os.environ['DATABASE_URL'])
         self.db = self.db_client[db_name]
-        self.collection = self.db['test_case_execution_history']
+        self.collection = self.db['execution_history']
 
     def save(self, result: TestCaseExecutionHistory) -> TestCaseExecutionHistory:
         result['created_at'] = datetime.utcnow()

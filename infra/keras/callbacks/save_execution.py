@@ -1,47 +1,18 @@
 from typing import Optional
 
 from cpuinfo import get_cpu_info
-from tensorflow import keras
+from keras import callbacks
 from tensorflow.python.client import device_lib
 
-from domain.models.test_case import TestCaseState
-from domain.models.test_case_execution_history import TestCaseExecutionHistory
-from domain.services.blob_storage_service import BlobStorageService
-from domain.services.model_storage_service import ModelStorageService
+from domain.models.test_case.test_case import TestCaseState
+from domain.models.test_case.test_case_execution_history import TestCaseExecutionHistory
 from domain.services.test_case_execution_service import TestCaseExecutionService
 from domain.services.test_case_service import TestCaseService
 
 
-class CSVResultsSave(keras.callbacks.Callback):
+class ExecutionSave(callbacks.Callback):
     def __init__(
             self,
-            blob_storage_service: BlobStorageService,
-            csv_log_path: str,
-            start_epoch: int
-    ):
-        super().__init__()
-        self.blob_storage = blob_storage_service
-        self.csv_log_path = csv_log_path
-        self.start_epoch = start_epoch
-
-    def on_epoch_end(self, execution_epoch: int, logs=None):
-        epoch = self.start_epoch + execution_epoch
-        epoch_suffix = f'_epoch-{epoch}.csv'
-        csv_new_name = self.csv_log_path.replace('.csv', epoch_suffix)
-
-        try:
-            self.blob_storage.save(self.csv_log_path, csv_new_name)
-            print(f"\n\nSaved CSV log: '{csv_new_name}'")
-
-        except Exception as error:
-            print(error)
-            print(f"\n\nError on save CSV log: '{error}'")
-
-
-class TrainedModelSaveRemote(keras.callbacks.Callback):
-    def __init__(
-            self,
-            model_storage: ModelStorageService,
             execution_service: TestCaseExecutionService,
             test_case_service: TestCaseService,
             filename: str,
@@ -49,7 +20,6 @@ class TrainedModelSaveRemote(keras.callbacks.Callback):
             start_epoch: int
     ):
         super().__init__()
-        self.model_storage = model_storage
         self.execution_service = execution_service
         self.test_case_service = test_case_service
         self.filename = filename
@@ -61,15 +31,6 @@ class TrainedModelSaveRemote(keras.callbacks.Callback):
         epoch_suffix = f'_epoch-{epoch}'
         new_filename = self.filename + epoch_suffix
         file_id = None
-
-        try:
-            file_id = self.model_storage.save(self.filename, new_filename)
-            print(f"\n\nSaved model! Name: '{new_filename} | Id: {file_id}'")
-
-        except Exception as error:
-            print(error)
-            print(f"\n\nError on save keras model: '{error}'")
-            exit(1)
 
         try:
             data: TestCaseExecutionHistory = {

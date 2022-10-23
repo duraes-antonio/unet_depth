@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Optional
 
-from domain.models.test_case_execution_history import TestCaseExecutionHistory
+from domain.models.test_case.test_case_execution_history import TestCaseExecutionHistory
 
 
 class TestCaseExecutionService(ABC):

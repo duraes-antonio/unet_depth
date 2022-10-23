@@ -3,13 +3,14 @@ from typing import List, Optional
 
 from keras.callbacks import CSVLogger, EarlyStopping, TensorBoard, ModelCheckpoint, Callback
 
-from domain.models.test_case import TestCase
-from domain.models.test_case_execution_history import TestCaseExecutionHistory
+from domain.models.test_case.test_case import TestCase
+from domain.models.test_case.test_case_execution_history import TestCaseExecutionHistory
 from domain.services.blob_storage_service import BlobStorageService
 from domain.services.model_storage_service import ModelStorageService
 from domain.services.test_case_execution_service import TestCaseExecutionService
 from domain.services.test_case_service import TestCaseService
-from infra.keras.callbacks import CSVResultsSave, TrainedModelSaveRemote
+from infra.keras.callbacks.save_csv import CSVResultsSave
+from infra.keras.callbacks.save_model import TrainedModelSaveRemote
 
 
 def get_model_name(test_case: TestCase) -> str:

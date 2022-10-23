@@ -4,8 +4,8 @@ from tensorflow import keras
 
 import infra.keras.metrics as tf_metrics
 from domain.models.data.data_generator import NyuV2Generator
-from domain.models.test_case import TestCaseState, TestCase
-from domain.models.test_case_execution_history import TestCaseExecutionHistory
+from domain.models.test_case.test_case import TestCaseState, TestCase
+from domain.models.test_case.test_case_execution_history import TestCaseExecutionHistory
 from domain.services.blob_storage_service import BlobStorageService
 from domain.services.model_storage_service import ModelStorageService
 from domain.services.test_case_execution_service import TestCaseExecutionService
