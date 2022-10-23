@@ -16,13 +16,9 @@ class TrainedModelSaveRemote(callbacks.Callback):
         self.start_epoch = start_epoch
 
     def on_epoch_end(self, epoch_index: int, logs=None):
-        epoch = self.start_epoch + epoch_index
-        epoch_suffix = f'_epoch-{epoch}'
-        new_filename = self.filename + epoch_suffix
-
         try:
-            file_id = self.model_storage.save(self.filename, new_filename)
-            print(f"\n\nSaved model! Name: '{new_filename} | Id: {file_id}'")
+            file_id = self.model_storage.save(self.filename)
+            print(f"\n\nSaved model! Name: '{self.filename} | Id: {file_id}'")
 
         except Exception as error:
             print(error)
