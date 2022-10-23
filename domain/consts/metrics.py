@@ -1,4 +1,6 @@
-from typing import Union, Literal
+from typing import Union
+
+from typing_extensions import Literal
 
 VALIDATION_METRICS_NAME = Literal[
     'val_loss',
