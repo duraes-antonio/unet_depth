@@ -5,7 +5,7 @@ from typing import Optional
 class ModelStorageService(ABC):
 
     @abstractmethod
-    def save(self, file_path: str, new_filename: Optional[str]) -> str:
+    def save(self, file_path: str, new_filename: Optional[str] = None) -> str:
         """
         Prepare and store a trained model
         :param new_filename: File name after stored

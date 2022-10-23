@@ -10,6 +10,7 @@ from domain.services.model_storage_service import ModelStorageService
 from domain.services.test_case_execution_service import TestCaseExecutionService
 from domain.services.test_case_service import TestCaseService
 from infra.keras.callbacks.save_csv import CSVResultsSave
+from infra.keras.callbacks.save_execution import ExecutionSave
 from infra.keras.callbacks.save_model import TrainedModelSaveRemote
 
 
@@ -42,25 +43,27 @@ def build_callbacks(
     tensorboard_log_path = "logs/fit/"
     tensorboard_current_log_path = tensorboard_log_path + datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 
-    model_checkpoint_callback = ModelCheckpoint(
+    model_checkpoint = ModelCheckpoint(
         filepath=trained_model_name,
         monitor='val_loss',
         mode='min',
         save_best_only=True
     )
-    save_model_remote_callback = TrainedModelSaveRemote(
+    save_execution = ExecutionSave(
+        execution_service, test_case_service, trained_model_name,
+        test_case['id'], epoch
+    )
+    save_model_remote = TrainedModelSaveRemote(
         model_storage,
-        execution_service,
-        test_case_service,
         trained_model_name,
-        test_case['id'],
         epoch
     )
     return [
         EarlyStopping(monitor='val_loss', patience=5, mode='min', restore_best_weights=True),
         CSVLogger(csv_log_name),
         CSVResultsSave(blob_storage, csv_log_name, epoch),
-        model_checkpoint_callback,
-        save_model_remote_callback,
+        model_checkpoint,
+        save_model_remote,
+        save_execution,
         TensorBoard(log_dir=tensorboard_current_log_path, histogram_freq=1),
     ]
