@@ -3,6 +3,7 @@ from datetime import datetime
 from bson import ObjectId
 
 from domain.models.named_entity import Entity
+from domain.models.train_result import TrainResult
 
 
 class TestCaseExecutionHistory(Entity):
@@ -13,4 +14,4 @@ class TestCaseExecutionHistory(Entity):
     model_id: str
     gpu_description: str
     cpu_description: str
-    results
+    result: TrainResult
