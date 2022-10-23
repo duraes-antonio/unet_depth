@@ -97,3 +97,6 @@ class GoogleDriveBlobStorageService(BlobStorageService, Generic[T]):
         file_metadata: NamedEntity = self.__get_metadata_by_id__(file_id)
         self.__download_file__(file_metadata['name'], file_metadata['id'])
         return file_metadata
+
+    def remove(self, file_id: str) -> None:
+        self.__service__.files().delete(fileId=file_id).execute()

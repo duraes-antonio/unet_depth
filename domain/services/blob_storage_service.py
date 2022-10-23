@@ -11,6 +11,10 @@ class BlobStorageService(ABC):
         pass
 
     @abstractmethod
+    def remove(self, file_id: str) -> None:
+        pass
+
+    @abstractmethod
     def download(self, file_id: str) -> Optional[NamedEntity]:
         pass
 

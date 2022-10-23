@@ -15,6 +15,14 @@ class ModelStorageService(ABC):
         pass
 
     @abstractmethod
+    def remove(self, file_id: str) -> None:
+        """
+        Remove a previously saved model
+        :param file_id: ID of model for delete
+        """
+        pass
+
+    @abstractmethod
     def recover(self, file_id: str) -> None:
         """
         Retrieves and prepares a stored model to its original format

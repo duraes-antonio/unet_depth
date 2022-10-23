@@ -24,6 +24,12 @@ class ModelStorageServiceGoogleDrive(ModelStorageService):
         os.remove(zip_complete_path)
         return file_id
 
+    def remove(self, file_id: str) -> None:
+        file_basic = self.storage_service.remove(file_id)
+
+        if file_basic:
+            shutil.unpack_archive(file_basic['name'], file_basic['name'].replace('.zip', ''))
+
     def recover(self, file_id: str) -> None:
         file_basic = self.storage_service.download(file_id)
 
