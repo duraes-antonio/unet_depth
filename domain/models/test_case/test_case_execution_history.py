@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import Union
 
 from bson import ObjectId
 
@@ -8,7 +9,7 @@ from domain.models.train_result import TrainResult
 
 class TestCaseExecutionHistory(Entity):
     epoch: int
-    test_case_id: ObjectId
+    test_case_id: Union[ObjectId, str]
     created_at: datetime
     model_name: str
     model_id: str

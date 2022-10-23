@@ -49,7 +49,7 @@ class ApplicationManager:
             test_case, last_execution, self.__blob_storage__, self.__model_storage__,
             self.__execution_service__, self.__test_case_service__
         )
-        last_epoch = last_execution['last_epoch'] if last_execution else 0
+        last_epoch = last_execution['epoch'] if last_execution else 0
         remaining_epochs = self.__max_epochs__ - last_epoch
         self.model.fit(
             self.training_generator, validation_data=self.validation_generator,

@@ -7,6 +7,7 @@ from tensorflow.python.client import device_lib
 from domain.models.test_case.test_case import TestCaseState
 from domain.models.test_case.test_case_execution_history import TestCaseExecutionHistory
 from domain.models.train_result import TrainResult
+from domain.services.model_storage_service import ModelStorageService
 from domain.services.test_case_execution_service import TestCaseExecutionService
 from domain.services.test_case_service import TestCaseService
 
@@ -27,6 +28,7 @@ def __get_gpu_info__() -> Optional[dict]:
 class ExecutionSave(callbacks.Callback):
     def __init__(
             self,
+            model_storage: ModelStorageService,
             execution_service: TestCaseExecutionService,
             test_case_service: TestCaseService,
             filename: str,
@@ -34,6 +36,7 @@ class ExecutionSave(callbacks.Callback):
             start_epoch: int
     ):
         super().__init__()
+        self.model_storage = model_storage
         self.execution_service = execution_service
         self.test_case_service = test_case_service
         self.filename = filename
@@ -47,14 +50,25 @@ class ExecutionSave(callbacks.Callback):
         file_id = None
 
         try:
+            file_id = self.model_storage.save(self.filename)
+            print(f"\n\nSaved model! Name: '{self.filename} | Id: {file_id}'")
+
+        except Exception as error:
+            print(error)
+            print(f"\n\nError on save keras model: '{error}'")
+            exit(1)
+
+        try:
             data: TestCaseExecutionHistory = {
                 'test_case_id': self.test_case_id,
                 'model_id': file_id,
                 'model_name': new_filename,
-                'last_epoch': epoch,
+                'epoch': epoch,
                 'cpu_description': str(__get_cpu_info__()),
                 'gpu_description': str(__get_gpu_info__()),
-                'result': logs
+                'result': logs,
+                'id': None,
+                'created_at': None
             }
             self.execution_service.save(data)
             self.test_case_service.update_state(self.test_case_id, TestCaseState.Busy)

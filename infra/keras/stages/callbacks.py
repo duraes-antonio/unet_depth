@@ -11,7 +11,6 @@ from domain.services.test_case_execution_service import TestCaseExecutionService
 from domain.services.test_case_service import TestCaseService
 from infra.keras.callbacks.save_csv import CSVResultsSave
 from infra.keras.callbacks.save_execution import ExecutionSave
-from infra.keras.callbacks.save_model import TrainedModelSaveRemote
 
 
 def get_model_name(test_case: TestCase) -> str:
@@ -35,7 +34,7 @@ def build_callbacks(
         execution_service: TestCaseExecutionService,
         test_case_service: TestCaseService,
 ) -> List[Callback]:
-    epoch = last_execution['last_epoch'] + 1 if last_execution else 1
+    epoch = last_execution['epoch'] + 1 if last_execution else 1
 
     trained_model_name = get_model_name(test_case)
     csv_log_name = f'{trained_model_name}.csv'
@@ -50,20 +49,14 @@ def build_callbacks(
         save_best_only=True
     )
     save_execution = ExecutionSave(
-        execution_service, test_case_service, trained_model_name,
-        test_case['id'], epoch
-    )
-    save_model_remote = TrainedModelSaveRemote(
-        model_storage,
-        trained_model_name,
-        epoch
+        model_storage, execution_service, test_case_service,
+        trained_model_name, test_case['id'], epoch
     )
     return [
         EarlyStopping(monitor='val_loss', patience=5, mode='min', restore_best_weights=True),
         CSVLogger(csv_log_name),
         CSVResultsSave(blob_storage, csv_log_name, epoch),
         model_checkpoint,
-        save_model_remote,
         save_execution,
         TensorBoard(log_dir=tensorboard_current_log_path, histogram_freq=1),
     ]
