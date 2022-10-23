@@ -1,15 +1,16 @@
 from datetime import datetime
 from typing import List, Optional
 
-from keras.callbacks import CSVLogger, EarlyStopping, TensorBoard, ModelCheckpoint, Callback
+from keras.callbacks import EarlyStopping, TensorBoard, ModelCheckpoint, Callback
 
 from domain.models.test_case.test_case import TestCase
 from domain.models.test_case.test_case_execution_history import TestCaseExecutionHistory
 from domain.services.blob_storage_service import BlobStorageService
 from domain.services.model_storage_service import ModelStorageService
+from domain.services.results_service import ResultService
 from domain.services.test_case_execution_service import TestCaseExecutionService
 from domain.services.test_case_service import TestCaseService
-from infra.keras.callbacks.save_csv import CSVResultsSave
+from infra.keras.callbacks.prepare_save_csv import PrepareSaveCSV
 from infra.keras.callbacks.save_execution import ExecutionSave
 
 
@@ -33,6 +34,7 @@ def build_callbacks(
         model_storage: ModelStorageService,
         execution_service: TestCaseExecutionService,
         test_case_service: TestCaseService,
+        result_service: ResultService,
 ) -> List[Callback]:
     epoch = last_execution['epoch'] + 1 if last_execution else 1
 
@@ -52,10 +54,12 @@ def build_callbacks(
         model_storage, execution_service, test_case_service,
         trained_model_name, test_case['id'], epoch
     )
+    prepare_and_save_csv = PrepareSaveCSV(
+        blob_storage, result_service, csv_log_name, test_case['id']
+    )
     return [
         EarlyStopping(monitor='val_loss', patience=5, mode='min', restore_best_weights=True),
-        CSVLogger(csv_log_name),
-        CSVResultsSave(blob_storage, csv_log_name, epoch),
+        prepare_and_save_csv,
         model_checkpoint,
         save_execution,
         TensorBoard(log_dir=tensorboard_current_log_path, histogram_freq=1),
