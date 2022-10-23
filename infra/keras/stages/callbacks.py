@@ -16,7 +16,7 @@ from infra.keras.callbacks.save_execution import ExecutionSave
 
 def get_model_name(test_case: TestCase) -> str:
     """
-    Obtém o nome do modelo (ex.: 'attention-unet_epoch-15_adam_resnet-101_imagenet-0') a partir de um caso de teste
+    Obtém o nome do modelo (ex.: 'attention-unet_adam_resnet-101_imagenet-0') a partir de um caso de teste
     :param test_case: Casos de teste com as informações da execução
     :return: Nome completo do modelo
     """

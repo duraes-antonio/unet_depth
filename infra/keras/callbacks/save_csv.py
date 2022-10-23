@@ -16,9 +16,7 @@ class CSVResultsSave(callbacks.Callback):
         self.start_epoch = start_epoch
 
     def on_epoch_end(self, execution_epoch: int, logs=None):
-        epoch = self.start_epoch + execution_epoch
-        epoch_suffix = f'_epoch-{epoch}.csv'
-        csv_new_name = self.csv_log_path.replace('.csv', epoch_suffix)
+        csv_new_name = self.csv_log_path
 
         try:
             self.blob_storage.save(self.csv_log_path, csv_new_name)

@@ -45,8 +45,6 @@ class ExecutionSave(callbacks.Callback):
 
     def on_epoch_end(self, epoch_index: int, logs: Optional[TrainResult] = None):
         epoch = self.start_epoch + epoch_index
-        epoch_suffix = f'_epoch-{epoch}'
-        new_filename = self.filename + epoch_suffix
         file_id = None
 
         try:
@@ -62,7 +60,7 @@ class ExecutionSave(callbacks.Callback):
             data: TestCaseExecutionHistory = {
                 'test_case_id': self.test_case_id,
                 'model_id': file_id,
-                'model_name': new_filename,
+                'model_name': self.filename,
                 'epoch': epoch,
                 'cpu_description': str(__get_cpu_info__()),
                 'gpu_description': str(__get_gpu_info__()),
