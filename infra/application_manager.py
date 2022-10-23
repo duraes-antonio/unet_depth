@@ -2,7 +2,6 @@ from typing import Tuple
 
 from tensorflow import keras
 
-import infra.keras.metrics as tf_metrics
 from domain.models.data.data_generator import NyuV2Generator
 from domain.models.test_case.test_case import TestCaseState, TestCase
 from domain.models.test_case.test_case_execution_history import TestCaseExecutionHistory
@@ -10,6 +9,7 @@ from domain.services.blob_storage_service import BlobStorageService
 from domain.services.model_storage_service import ModelStorageService
 from domain.services.test_case_execution_service import TestCaseExecutionService
 from domain.services.test_case_service import TestCaseService
+from infra.keras.consts.metrics import all_metrics, metrics_custom_object
 from infra.keras.loss import depth_loss
 from infra.keras.model import build_model
 from infra.keras.stages.callbacks import build_callbacks, get_model_name
@@ -40,33 +40,9 @@ class ApplicationManager:
         self.__image_size__ = size
         self.__max_epochs__ = epochs
 
-    def __get_metrics__(self):
-        return [
-            tf_metrics.abs_rel,
-            tf_metrics.sq_rel,
-            tf_metrics.rmse,
-            tf_metrics.rmse_log,
-            tf_metrics.log_10,
-            tf_metrics.threshold_1,
-            tf_metrics.threshold_2,
-            tf_metrics.threshold_3,
-        ]
-
     def __get_trained_model__(self, model_id: str, model_name: str):
-
         self.__model_storage__.recover(model_id)
-        custom_objects = {
-            'depth_loss': depth_loss,
-            'abs_rel': tf_metrics.abs_rel,
-            'sq_rel': tf_metrics.sq_rel,
-            'rmse': tf_metrics.rmse,
-            'rmse_log': tf_metrics.rmse_log,
-            'log_10': tf_metrics.log_10,
-            'threshold_1': tf_metrics.threshold_1,
-            'threshold_2': tf_metrics.threshold_2,
-            'threshold_3': tf_metrics.threshold_3,
-        }
-        return keras.models.load_model(model_name, custom_objects)
+        return keras.models.load_model(model_name, metrics_custom_object)
 
     def __train__(self, test_case: TestCase, last_execution: TestCaseExecutionHistory):
         callbacks = build_callbacks(
@@ -135,11 +111,7 @@ class ApplicationManager:
             if last_execution and last_execution['model_id']:
                 model_id = last_execution['model_id']
                 model_name = last_execution['model_name']
-                print(f"""
-Modelo treinado encontrado:
-ID:   {model_id}
-Nome: {model_name}
-""")
+                print(f"""\nModelo treinado encontrado:\nID:   {model_id}\nNome: {model_name}\n""")
                 self.model = self.__get_trained_model__(model_id, model_name)
 
             else:
@@ -148,8 +120,9 @@ Nome: {model_name}
                 print('Finalizado: build do modelo')
 
                 optimizer = str(test_case['optimizer'].value).lower()
+
                 print('Iniciado: compilação do modelo')
-                self.model.compile(loss=depth_loss, metrics=self.__get_metrics__(), optimizer=optimizer)
+                self.model.compile(loss=depth_loss, metrics=all_metrics, optimizer=optimizer)
                 print('Finalizado compilação do modelo')
 
             print('Iniciado: treinamento')
