@@ -7,6 +7,7 @@ from domain.models.test_case.test_case import TestCaseState, TestCase
 from domain.models.test_case.test_case_execution_history import TestCaseExecutionHistory
 from domain.services.blob_storage_service import BlobStorageService
 from domain.services.model_storage_service import ModelStorageService
+from domain.services.results_service import ResultService
 from domain.services.test_case_execution_service import TestCaseExecutionService
 from domain.services.test_case_service import TestCaseService
 from infra.keras.consts.metrics import all_metrics, metrics_custom_object
@@ -30,6 +31,7 @@ class ApplicationManager:
             model_storage: ModelStorageService,
             execution_service: TestCaseExecutionService,
             test_case_service: TestCaseService,
+            result_service: ResultService,
             size: Tuple[int, int] = (256, 256),
             epochs: int = 20,
     ):
@@ -37,6 +39,7 @@ class ApplicationManager:
         self.__model_storage__ = model_storage
         self.__execution_service__ = execution_service
         self.__test_case_service__ = test_case_service
+        self.__result_service__ = result_service
         self.__image_size__ = size
         self.__max_epochs__ = epochs
 
@@ -47,7 +50,7 @@ class ApplicationManager:
     def __train__(self, test_case: TestCase, last_execution: TestCaseExecutionHistory):
         callbacks = build_callbacks(
             test_case, last_execution, self.__blob_storage__, self.__model_storage__,
-            self.__execution_service__, self.__test_case_service__
+            self.__execution_service__, self.__test_case_service__, self.__result_service__
         )
         last_epoch = last_execution['epoch'] if last_execution else 0
         remaining_epochs = self.__max_epochs__ - last_epoch
