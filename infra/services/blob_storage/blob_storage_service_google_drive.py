@@ -45,15 +45,33 @@ class GoogleDriveBlobStorageService(BlobStorageService, Generic[T]):
         folders = folders_dict['files']
         return folders[0]['id'] if folders else None
 
+    def __search_filer__(self, name: str) -> str:
+        files = self.__service__.files()
+        folders_dict = files.list(
+            q=f"name = '{name}' and not mimeType='application/vnd.google-apps.folder'",
+            fields="files(id, name)"
+        ).execute()
+        folders = folders_dict['files']
+        return folders[0]['id'] if folders else None
+
     def __upload_file__(self, file_path: str, new_filename: Optional[str], folder_id: str) -> str:
         file_metadata = {
             'name': new_filename or Path(file_path).name,
             'parents': [folder_id]
         }
         media = MediaFileUpload(file_path, resumable=True)
-        file = self.__service__.files().create(
-            body=file_metadata, media_body=media, fields='id'
-        ).execute()
+        model_id = self.__search_filer__(file_metadata['name'])
+
+        if model_id:
+            file = self.__service__.files().update(
+                fileId=model_id, body=file_metadata, media_body=media, fields='id'
+            ).execute()
+
+        else:
+            file = self.__service__.files().create(
+                body=file_metadata, media_body=media, fields='id'
+            ).execute()
+
         return file['id']
 
     def __download_file__(self, new_name: str, file_id: str):
