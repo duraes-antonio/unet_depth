@@ -5,24 +5,24 @@ Repositório para implementação de projetos relacionados à dissertação do m
 ## Checklist de implementações
 
 Testar nos ambientes de execução:
-- [ ] Google Colab
-- [ ] Kaggle
+- [x] Google Colab
+- [x] Kaggle
 - [ ] Local
 
 Features:
-- [ ] Salvar modelo a cada época
-- [ ] Salvar resultados a cada época
-- [ ] Gerar CSV com resultados após finalizar caso de teste
-- [ ] Continua execução inativa após algum tempo
+- [x] Salvar modelo a cada época
+- [x] Salvar resultados a cada época
+- [x] Gerar CSV com resultados após finalizar caso de teste
+- [x] Continua execução inativa após algum tempo
 
 
 ## Métricas implementadas
-- [ ] Threshold (δ¹, δ², δ³)
-- [ ] Abs. Relative Difference
-- [ ] Squared Relative Difference
-- [ ] RMSE linear
-- [ ] RMSE log
-- [ ] log 10
+- [x] Threshold (δ¹, δ², δ³)
+- [x] Abs. Relative Difference
+- [x] Squared Relative Difference
+- [x] RMSE linear
+- [x] RMSE log
+- [x] log 10
 
 
 ## Arquitetura
