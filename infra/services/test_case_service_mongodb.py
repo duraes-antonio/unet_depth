@@ -31,12 +31,15 @@ class TestCaseServiceMongoDB(TestCaseService):
                 {'state': TestCaseState.Available.value},
                 {
                     '$or': [
-                        {
-                            'last_modified': {
-                                '$lte': one_hour_ago
+                        {'last_modified': None},
+                        {'$and':
+                            {
+                                'last_modified': {
+                                    '$lte': one_hour_ago
+                                },
+                                'state': TestCaseState.Busy.value
                             }
                         },
-                        {'last_modified': None}
                     ]
                 }
             ],
