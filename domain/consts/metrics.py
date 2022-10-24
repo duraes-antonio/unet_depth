@@ -1,4 +1,4 @@
-from typing import Union
+from typing import Union, List
 
 from typing_extensions import Literal
 
@@ -13,7 +13,7 @@ VALIDATION_METRICS_NAME = Literal[
     'val_threshold_2',
     'val_threshold_3',
 ]
-METRICS_NAME = Literal[
+METRIC_NAME = Literal[
     'loss',
     'abs_rel',
     'sq_rel',
@@ -24,4 +24,15 @@ METRICS_NAME = Literal[
     'threshold_2',
     'threshold_3',
 ]
-TRAIN_VAL_METRICS_NAME = Union[METRICS_NAME, VALIDATION_METRICS_NAME]
+METRICS_NAMES: List[METRIC_NAME] = [
+    'loss',
+    'abs_rel',
+    'sq_rel',
+    'rmse',
+    'rmse_log',
+    'log_10',
+    'threshold_1',
+    'threshold_2',
+    'threshold_3',
+]
+TRAIN_VAL_METRICS_NAME = Union[METRIC_NAME, VALIDATION_METRICS_NAME]

@@ -1,7 +1,7 @@
 import pandas
 from tensorflow import keras
 
-from domain.consts.metrics import METRICS_NAME
+from domain.consts.metrics import METRICS_NAMES
 from domain.models.data.data_generator import NyuV2Generator
 from domain.services.blob_storage_service import BlobStorageService
 
@@ -23,7 +23,7 @@ def evaluate(
         csv_name: str
 ) -> None:
     metric_values = model.evaluate(data_generator, batch_size=8)
-    metrics_dict = {name: [value] for name, value in zip(METRICS_NAME, metric_values)}
+    metrics_dict = {name: [value] for name, value in zip(METRICS_NAMES, metric_values)}
     dataframe = pandas.DataFrame(metrics_dict)
 
     filename = csv_name.replace('.csv', '_test.csv')
