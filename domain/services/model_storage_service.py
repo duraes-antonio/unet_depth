@@ -5,12 +5,20 @@ from typing import Optional
 class ModelStorageService(ABC):
 
     @abstractmethod
-    def save(self, file_path: str, new_filename: Optional[str]) -> str:
+    def save(self, file_path: str, new_filename: Optional[str] = None) -> str:
         """
         Prepare and store a trained model
         :param new_filename: File name after stored
         :param file_path: Path of the file to be stored
         :return: Stored file id
+        """
+        pass
+
+    @abstractmethod
+    def remove(self, file_id: str) -> None:
+        """
+        Remove a previously saved model
+        :param file_id: ID of model for delete
         """
         pass
 

@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from typing import Optional, Iterable
 
 from domain.models.network import Networks, KerasBackbone, Optimizers
-from domain.models.test_case import TestCase, TestCaseState
+from domain.models.test_case.test_case import TestCase, TestCaseState
 
 
 class TestCaseService(ABC):

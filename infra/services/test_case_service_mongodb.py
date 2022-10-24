@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 from pymongo import MongoClient
 
 from domain.models.network import Networks, KerasBackbone, Optimizers
-from domain.models.test_case import TestCase, TestCaseState
+from domain.models.test_case.test_case import TestCase, TestCaseState
 from domain.services.test_case_service import TestCaseService
 
 load_dotenv()
@@ -25,7 +25,7 @@ class TestCaseServiceMongoDB(TestCaseService):
         return self.__dict_to_object__(test_case)
 
     def get_first_available(self) -> Optional[TestCase]:
-        six_hours_ago = datetime.utcnow() - timedelta(hours=6)
+        one_hour_ago = datetime.utcnow() - timedelta(hours=1)
         query = {
             '$or': [
                 {'state': TestCaseState.Available.value},
@@ -33,7 +33,7 @@ class TestCaseServiceMongoDB(TestCaseService):
                     '$or': [
                         {
                             'last_modified': {
-                                '$lte': six_hours_ago
+                                '$lte': one_hour_ago
                             }
                         },
                         {'last_modified': None}
