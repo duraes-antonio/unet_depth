@@ -14,6 +14,7 @@ Features:
 - [x] Salvar resultados a cada época
 - [x] Gerar CSV com resultados após finalizar caso de teste
 - [x] Continua execução inativa após algum tempo
+- [ ] Notebook para carregar modelo e exibir comparações na base de teste
 
 
 ## Métricas implementadas
