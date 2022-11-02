@@ -89,7 +89,8 @@ class TestCaseServiceMongoDB(TestCaseService):
     def remove_all(self):
         self.collection.delete_many({})
 
-    def __dict_to_object__(self, dict_instance: TestCase) -> TestCase:
+    @staticmethod
+    def __dict_to_object__(dict_instance: TestCase) -> TestCase:
         if not dict_instance:
             return dict_instance
 
