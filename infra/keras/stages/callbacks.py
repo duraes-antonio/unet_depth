@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import List, Optional
 
-from keras.callbacks import EarlyStopping, TensorBoard, ModelCheckpoint, Callback
+from tensorflow.keras.callbacks import EarlyStopping, TensorBoard, ModelCheckpoint, Callback
 
 from domain.models.test_case.test_case import TestCase
 from domain.models.test_case.test_case_execution_history import TestCaseExecutionHistory
@@ -24,7 +24,7 @@ def get_model_name(test_case: TestCase) -> str:
     optimizer = str(test_case['optimizer'].value).lower()
     backbone = str(test_case['backbone'].value).lower()
     use_image_net = int(test_case['use_imagenet_weights'])
-    return f'{network}_{optimizer}_{backbone}_imagenet-{use_image_net}'
+    return f'{network}_{optimizer}_{backbone}_imagenet-{use_image_net}_batch-4_64-128-256-512'
 
 
 def build_callbacks(
