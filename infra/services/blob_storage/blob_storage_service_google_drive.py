@@ -13,9 +13,9 @@ T = TypeVar('T')
 
 
 class GoogleDriveBlobStorageService(BlobStorageService, Generic[T]):
-    directory = 'unet_depth'
 
-    def __init__(self):
+    def __init__(self, folder_name: str):
+        self.directory = folder_name or 'unet_depth_256x256_bgr'
         self.__credentials__ = GoogleDriveTokenManager().load_credentials()
         self.__service__ = build('drive', 'v3', credentials=self.__credentials__)
 
@@ -26,7 +26,7 @@ class GoogleDriveBlobStorageService(BlobStorageService, Generic[T]):
         }
         files = self.__service__.files()
         file = files.create(body=file_metadata, fields='id').execute()
-        return file.download('id')
+        return file['id']
 
     def __get_metadata_by_id__(self, file_id: str) -> Optional[NamedEntity]:
         files = self.__service__.files().get(fileId=file_id).execute()
