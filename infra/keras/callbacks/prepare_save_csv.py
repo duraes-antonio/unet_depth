@@ -1,11 +1,11 @@
 import pandas
-from keras import callbacks
+from tensorflow import keras
 
 from domain.services.blob_storage_service import BlobStorageService
 from domain.services.results_service import ResultService
 
 
-class PrepareSaveCSV(callbacks.Callback):
+class PrepareSaveCSV(keras.callbacks.Callback):
     def __init__(
             self,
             blob_storage_service: BlobStorageService,
