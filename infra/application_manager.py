@@ -1,7 +1,8 @@
+import gc
 from typing import Tuple
 
+import tensorflow as tf
 from tensorflow import keras
-
 from domain.models.data.data_generator import NyuV2Generator
 from domain.models.test_case.test_case import TestCaseState, TestCase
 from domain.models.test_case.test_case_execution_history import TestCaseExecutionHistory
@@ -140,5 +141,8 @@ class ApplicationManager:
             print(f"Caso de teste finalizado! ID {test_case_id}")
 
             test_case = self.__test_case_service__.get_first_available()
+            del self.model
+            tf.keras.backend.clear_session()
+            gc.collect()
 
         print('Não há casos de testes para executar!')
