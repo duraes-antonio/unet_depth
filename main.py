@@ -3,7 +3,7 @@ from infra.services.test_case_service_mongodb import TestCaseServiceMongoDB
 
 
 def main():
-    test_case_serv = TestCaseServiceMongoDB('unet_depth')
+    test_case_serv = TestCaseServiceMongoDB('ud_256_bgr_batch-4_64-1024_pool-1')
 
     networks = [Networks.UNet, Networks.AttentionUNet, Networks.TransUNet]
     optimizers = [Optimizers.Adam]
