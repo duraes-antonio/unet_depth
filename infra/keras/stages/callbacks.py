@@ -3,6 +3,7 @@ from typing import List, Optional
 
 from tensorflow.keras.callbacks import EarlyStopping, TensorBoard, ModelCheckpoint, Callback
 
+from domain.models.network import NetworkConfig
 from domain.models.test_case.test_case import TestCase
 from domain.models.test_case.test_case_execution_history import TestCaseExecutionHistory
 from domain.services.blob_storage_service import BlobStorageService
@@ -14,9 +15,10 @@ from infra.keras.callbacks.prepare_save_csv import PrepareSaveCSV
 from infra.keras.callbacks.save_execution import ExecutionSave
 
 
-def get_model_name(test_case: TestCase) -> str:
+def get_model_name(test_case: TestCase, config: NetworkConfig) -> str:
     """
     Obtém o nome do modelo (ex.: 'attention-unet_adam_resnet-101_imagenet-0') a partir de um caso de teste
+    :param config:
     :param test_case: Casos de teste com as informações da execução
     :return: Nome completo do modelo
     """
@@ -24,7 +26,9 @@ def get_model_name(test_case: TestCase) -> str:
     optimizer = str(test_case['optimizer'].value).lower()
     backbone = str(test_case['backbone'].value).lower()
     use_image_net = int(test_case['use_imagenet_weights'])
-    return f'{network}_{optimizer}_{backbone}_imagenet-{use_image_net}_batch-4_64-128-256-512'
+    min_filter = config['filter_min']
+    max_filter = config['filter_max']
+    return f'{network}_{optimizer}_{backbone}_imagenet-{use_image_net}_batch-4_f-{min_filter}-{max_filter}'
 
 
 def build_callbacks(
@@ -35,10 +39,11 @@ def build_callbacks(
         execution_service: TestCaseExecutionService,
         test_case_service: TestCaseService,
         result_service: ResultService,
+        network_config: NetworkConfig
 ) -> List[Callback]:
     epoch = last_execution['epoch'] + 1 if last_execution else 1
 
-    trained_model_name = get_model_name(test_case)
+    trained_model_name = get_model_name(test_case, network_config)
     csv_log_name = f'{trained_model_name}.csv'
 
     tensorboard_log_path = "logs/fit/"

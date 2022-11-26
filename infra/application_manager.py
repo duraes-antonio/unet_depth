@@ -109,7 +109,7 @@ class ApplicationManager:
             )
             print(f"Última execução do casos de teste: {last_execution['id'] if last_execution else None}")
 
-            model_name = get_model_name(test_case)
+            model_name = get_model_name(test_case, self.__network_config__)
 
             # Buscar o blob do último modelo atualizado
             if last_execution and last_execution['model_id']:
