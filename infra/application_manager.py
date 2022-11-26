@@ -53,7 +53,8 @@ class ApplicationManager:
     def __train__(self, test_case: TestCase, last_execution: TestCaseExecutionHistory):
         callbacks = build_callbacks(
             test_case, last_execution, self.__blob_storage__, self.__model_storage__,
-            self.__execution_service__, self.__test_case_service__, self.__result_service__
+            self.__execution_service__, self.__test_case_service__, self.__result_service__,
+            self.__network_config__
         )
         last_epoch = last_execution['epoch'] if last_execution else 0
         remaining_epochs = self.__max_epochs__ - last_epoch
