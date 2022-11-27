@@ -2,10 +2,7 @@ from typing import List
 
 from domain.models.network import Optimizers, KerasBackbone, Networks, NetworkConfig
 from infra.services.test_case_service_mongodb import TestCaseServiceMongoDB
-
-
-def build_db_name(config: NetworkConfig) -> str:
-    return f"{config['size']}_{config['filter_min']}-{config['filter_max']}_pool-{config['pool']}_unpool-{config['unpool']}"
+from infra.util.mongodb import build_db_name
 
 
 def get_all_config() -> List[NetworkConfig]:
