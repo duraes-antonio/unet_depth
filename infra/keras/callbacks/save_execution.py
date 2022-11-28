@@ -1,7 +1,7 @@
 from typing import Optional
 
 from cpuinfo import get_cpu_info
-from keras import callbacks
+from tensorflow import keras
 from tensorflow.python.client import device_lib
 
 from domain.models.test_case.test_case import TestCaseState
@@ -25,7 +25,7 @@ def __get_gpu_info__() -> Optional[dict]:
     return gpus if gpus else None
 
 
-class ExecutionSave(callbacks.Callback):
+class ExecutionSave(keras.callbacks.Callback):
     def __init__(
             self,
             model_storage: ModelStorageService,
@@ -65,8 +65,6 @@ class ExecutionSave(callbacks.Callback):
                 'cpu_description': str(__get_cpu_info__()),
                 'gpu_description': str(__get_gpu_info__()),
                 'result': logs,
-                'id': None,
-                'created_at': None
             }
             self.execution_service.save(data)
             self.test_case_service.update_state(self.test_case_id, TestCaseState.Busy)

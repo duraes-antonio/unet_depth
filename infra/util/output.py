@@ -2,8 +2,8 @@ from pathlib import Path
 
 import matplotlib.pyplot as plot
 import numpy
-from keras import Model
 from numpy import ndarray
+from tensorflow import keras
 
 from domain.models.data.data_generator import NyuV2Generator
 from domain.models.test_case.test_case import TestCase
@@ -25,7 +25,7 @@ Pesos imagenet: {test_case['use_imagenet_weights']}
 
 
 def plot_image_comparison(
-        model: Model,
+        model: keras.Model,
         xy_path_pairs: PathPairs,
 ):
     """

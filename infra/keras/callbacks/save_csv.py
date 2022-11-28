@@ -1,9 +1,8 @@
-from keras import callbacks
-
+from tensorflow import keras
 from domain.services.blob_storage_service import BlobStorageService
 
 
-class CSVResultsSave(callbacks.Callback):
+class CSVResultsSave(keras.callbacks.Callback):
     def __init__(
             self,
             blob_storage_service: BlobStorageService,

@@ -1,8 +1,10 @@
-from typing import Tuple
+import gc
 
+import tensorflow as tf
 from tensorflow import keras
 
 from domain.models.data.data_generator import NyuV2Generator
+from domain.models.network import NetworkConfig
 from domain.models.test_case.test_case import TestCaseState, TestCase
 from domain.models.test_case.test_case_execution_history import TestCaseExecutionHistory
 from domain.services.blob_storage_service import BlobStorageService
@@ -32,7 +34,7 @@ class ApplicationManager:
             execution_service: TestCaseExecutionService,
             test_case_service: TestCaseService,
             result_service: ResultService,
-            size: Tuple[int, int] = (256, 256),
+            config: NetworkConfig,
             epochs: int = 20,
     ):
         self.__blob_storage__ = blob_storage
@@ -40,7 +42,8 @@ class ApplicationManager:
         self.__execution_service__ = execution_service
         self.__test_case_service__ = test_case_service
         self.__result_service__ = result_service
-        self.__image_size__ = size
+        self.__image_size__ = config['size'], config['size']
+        self.__network_config__ = config
         self.__max_epochs__ = epochs
 
     def __get_trained_model__(self, model_id: str, model_name: str):
@@ -50,7 +53,8 @@ class ApplicationManager:
     def __train__(self, test_case: TestCase, last_execution: TestCaseExecutionHistory):
         callbacks = build_callbacks(
             test_case, last_execution, self.__blob_storage__, self.__model_storage__,
-            self.__execution_service__, self.__test_case_service__, self.__result_service__
+            self.__execution_service__, self.__test_case_service__, self.__result_service__,
+            self.__network_config__
         )
         last_epoch = last_execution['epoch'] if last_execution else 0
         remaining_epochs = self.__max_epochs__ - last_epoch
@@ -106,9 +110,7 @@ class ApplicationManager:
             )
             print(f"Última execução do casos de teste: {last_execution['id'] if last_execution else None}")
 
-            model_name = get_model_name(test_case)
-            width, height = self.__image_size__
-            input_shape = (width, height, 3)
+            model_name = get_model_name(test_case, self.__network_config__)
 
             # Buscar o blob do último modelo atualizado
             if last_execution and last_execution['model_id']:
@@ -119,7 +121,7 @@ class ApplicationManager:
 
             else:
                 print('Iniciado: build do modelo')
-                self.model = build_model(test_case, input_shape)
+                self.model = build_model(test_case, self.__network_config__)
                 print('Finalizado: build do modelo')
 
                 optimizer = str(test_case['optimizer'].value).lower()
@@ -140,5 +142,8 @@ class ApplicationManager:
             print(f"Caso de teste finalizado! ID {test_case_id}")
 
             test_case = self.__test_case_service__.get_first_available()
+            del self.model
+            tf.keras.backend.clear_session()
+            gc.collect()
 
         print('Não há casos de testes para executar!')

@@ -36,7 +36,8 @@ class GoogleDriveTokenManager:
         credentials: goauth.credentials.Credentials = flow.run_local_server(port=0)
         return self.__save_credentials__(token_file_name, credentials)
 
-    def __save_credentials__(self, filename: str, credentials: Credentials) -> Credentials:
+    @staticmethod
+    def __save_credentials__(filename: str, credentials: Credentials) -> Credentials:
         with open(filename, 'w') as token_file:
             token_file.write(credentials.to_json())
 

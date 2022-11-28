@@ -28,6 +28,7 @@ class ResultServiceMongoDB(ResultService):
     def get_and_unify(self, test_case_id: str) -> FinalTrainResult:
         executions = self.get_by_test(test_case_id)
         dict_metrics: FinalTrainResult = {}
+        key: TRAIN_VAL_METRICS_NAME
         metric_keys: List[TRAIN_VAL_METRICS_NAME] = [key for key in TrainResult.__annotations__]
 
         for key in metric_keys:

@@ -1,4 +1,5 @@
 from enum import Enum
+from typing_extensions import TypedDict
 
 
 class Networks(Enum):
@@ -22,3 +23,11 @@ class Optimizers(Enum):
     Adam = 'adam'
     RMSProp = 'rmsprop'
     SGD = 'sgd'
+
+
+class NetworkConfig(TypedDict):
+    size: int
+    filter_min: int
+    filter_max: int
+    pool: bool
+    unpool: bool

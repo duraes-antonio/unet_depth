@@ -18,7 +18,9 @@ class TestCaseServiceMongoDB(TestCaseService):
     def __init__(self, db_name):
         self.db_client = MongoClient(os.environ['DATABASE_URL'])
         self.db = self.db_client[db_name]
+        self.db_name = db_name
         self.collection = self.db['test_cases']
+        self.__populate_if_empty__()
 
     def get(self, _id: str) -> TestCase:
         test_case = self.collection.find_one(ObjectId(_id))
@@ -89,7 +91,19 @@ class TestCaseServiceMongoDB(TestCaseService):
     def remove_all(self):
         self.collection.delete_many({})
 
-    def __dict_to_object__(self, dict_instance: TestCase) -> TestCase:
+    def __populate_if_empty__(self):
+        if self.get_first_available():
+            return
+
+        networks = [Networks.UNet, Networks.AttentionUNet, Networks.TransUNet]
+        optimizers = [Optimizers.Adam]
+        backbones = [KerasBackbone.ResNet50, KerasBackbone.ResNet101]
+
+        self.remove_all()
+        self.populate(networks, backbones, optimizers)
+
+    @staticmethod
+    def __dict_to_object__(dict_instance: TestCase) -> TestCase:
         if not dict_instance:
             return dict_instance
 
