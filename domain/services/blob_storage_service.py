@@ -21,3 +21,7 @@ class BlobStorageService(ABC):
     @abstractmethod
     def download_last(self) -> Optional[NamedEntity]:
         pass
+
+    @abstractmethod
+    def get_by_name(self, file_name: str) -> Optional[NamedEntity]:
+        pass

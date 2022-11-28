@@ -1,6 +1,8 @@
 from abc import ABC, abstractmethod
 from typing import Optional
 
+from domain.models.named_entity import NamedEntity
+
 
 class ModelStorageService(ABC):
 
@@ -23,9 +25,17 @@ class ModelStorageService(ABC):
         pass
 
     @abstractmethod
-    def recover(self, file_id: str) -> None:
+    def recover(self, file_id: str) -> Optional[NamedEntity]:
         """
         Retrieves and prepares a stored model to its original format
         :param file_id: Stored file id
+        """
+        pass
+
+    @abstractmethod
+    def recover_by_name(self, file_name: str) -> Optional[NamedEntity]:
+        """
+        Retrieves and prepares a stored model to its original format
+        :param file_name: Stored file name
         """
         pass
