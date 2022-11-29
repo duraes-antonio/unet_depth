@@ -6,6 +6,12 @@ Repositório para implementação de projetos relacionados à dissertação do m
 
 Comparar desempenho de modelos baseados em U-Net (U-Net original) e Transformers (TransUnet, AttentionUnet) com outras implementações para a tarefa de estimativa de profundidade.
 
+## Justificativas para criação de aplicação distribuída
+
+- **Paralelismo:** O treinamento do modelo pode levar várias horas ou dias, além disso há outras tarefas da dissertação além dos experimentos, por isso, executar o modelo localmente em diversas máquinas ou online (Kaggle, Google Colab, por exemplo) é algo fundamental para viabilizar o projeto
+- **Recuperabilidade:** O treinamento é demorado e pode ser interrompido por inúmeras causas (queda de luz, de rede, manutenção da máquina), perder horas de processamento é um problema grave, portanto, o estado do modelo deve ser salvo e recuperado
+- **Produtividade:** Uma vez populado a base de casos de teste, o sistema deve executar todos sem a necessidade de alterações manuais (salvo mudanças de configurações para adaptarem ao ambiente que estão executando)
+
 ## Configurações para testar viabilidade do projeto
 
 Modelo: U-Net (tradicional)
