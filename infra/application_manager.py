@@ -1,11 +1,11 @@
 import gc
-from typing import Optional, Tuple
+from typing import Optional
 
 import tensorflow as tf
 from tensorflow import keras
 
 from domain.models.data.data_generator import NyuV2Generator
-from domain.models.test_case.test_case import TestCaseState, TestCase
+from domain.models.test_case.test_case import TestCaseState, TestCase, TestCaseConfig
 from domain.models.test_case.test_case_execution_history import TestCaseExecutionHistory
 from domain.services.blob_storage_service import BlobStorageService
 from domain.services.model_storage_service import ModelStorageService
@@ -61,10 +61,11 @@ class ApplicationManager:
         test_config = test_case['config']
         size = test_config['size']
         size = size, size
+        read_mode = test_config['read_mode']
 
         partition = load_nyu_train_paths(csv_train_path, 0.3, seed, dataset_usage)
-        training_gen = NyuV2Generator(partition['train'], batch_size, shuffle, seed, size)
-        validation_gen = NyuV2Generator(partition['validation'], batch_size, shuffle, seed, size)
+        training_gen = NyuV2Generator(partition['train'], batch_size, shuffle, seed, size, read_mode=read_mode)
+        validation_gen = NyuV2Generator(partition['validation'], batch_size, shuffle, seed, size, read_mode=read_mode)
 
         callbacks = build_callbacks(
             test_case, last_execution, self.__blob_storage__, self.__model_storage__,
@@ -78,12 +79,14 @@ class ApplicationManager:
             callbacks=callbacks, epochs=remaining_epochs
         )
 
-    def __test__(self, model_name: str, csv_test_path: str, size: Tuple[int, int]):
+    def __test__(self, model_name: str, csv_test_path: str, test_config: TestCaseConfig):
         test_path_pairs = read_nyu_csv(csv_test_path)
+        size = test_config['size'], test_config['size']
+        read_mode = test_config['read_mode']
 
         self.test_generator = NyuV2Generator(
             test_path_pairs, batch_size=self.__batch_size__, shuffle=False,
-            seed=self.__seed__, image_size=size
+            seed=self.__seed__, image_size=size, read_mode=read_mode
         )
         evaluate(self.model, self.test_generator, self.__blob_storage__, model_name + '.csv')
 
@@ -131,7 +134,7 @@ class ApplicationManager:
             print('Finalizado: treinamento')
 
             print('Iniciado: teste')
-            self.__test__(model_name, test_data_path, (test_config['size'], test_config['size']))
+            self.__test__(model_name, test_data_path, test_config)
             print('Finalizado: teste')
 
             self.__test_case_service__.update_state(test_case['id'], TestCaseState.Done)

@@ -4,6 +4,7 @@ import numpy
 from numpy import ndarray, arange, floor
 from tensorflow import keras
 
+from domain.models.test_case.test_case import InputReadMode
 from infra.util.dataset import PathPairs
 from infra.util.preprocessing import preprocess_image, preprocess_depth_map
 
@@ -19,6 +20,7 @@ class NyuV2Generator(keras.utils.Sequence):
             batch_size=8, shuffle=False, seed=42,
             image_size: Tuple[int, int] = (256, 256),
             n_channels: int = 3,
+            read_mode: InputReadMode = InputReadMode.BGR2GRAY
     ):
         self.n_channels = n_channels
         self.batch_size = batch_size
@@ -26,6 +28,7 @@ class NyuV2Generator(keras.utils.Sequence):
         self.indexes = arange(len(path_list))
         self.length = int(floor(len(path_list) / batch_size))
         self.image_size = image_size
+        self.read_mode = read_mode
 
         if shuffle:
             self.__shuffle_indexes__(path_list, seed)
@@ -59,5 +62,5 @@ class NyuV2Generator(keras.utils.Sequence):
 
         for index, (x_path, y_path) in enumerate(paths_pairs):
             empty_batch[index,] = preprocess_image(x_path, self.image_size)
-            target_depth_map[index,] = preprocess_depth_map(y_path, self.image_size)
+            target_depth_map[index,] = preprocess_depth_map(y_path, self.read_mode, self.image_size)
         return empty_batch, target_depth_map
