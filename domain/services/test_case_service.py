@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from typing import Optional, Iterable
 
 from domain.models.network import Networks, KerasBackbone, Optimizers
-from domain.models.test_case.test_case import TestCase, TestCaseState, TestCaseConfig
+from domain.models.test_case.test_case import TestCase, TestCaseState, InputReadMode
 
 
 class TestCaseService(ABC):
@@ -27,17 +27,27 @@ class TestCaseService(ABC):
 
     @abstractmethod
     def populate(
-            self, networks: Iterable[Networks],
+            self,
+            networks: Iterable[Networks],
             backbones: Iterable[KerasBackbone],
             optimizers: Iterable[Optimizers],
-            config: TestCaseConfig
+            read_modes: Iterable[InputReadMode],
+            use_imagenet_weights: Iterable[bool] = (True, False),
+            sizes: Iterable[int] = (256, 512),
+            filters_min: Iterable[int] = (64,),
+            filters_max: Iterable[int] = (512, 1024),
     ) -> None:
         """
         Gera todas as combinações possíveis de casos de teste e os persiste
+        :param use_imagenet_weights:
         :param networks: Conjunto de redes a serem usadas
         :param backbones: Conjunto de backbones a serem usados
         :param optimizers: Conjunto de otimizadores
         :param config: Configuração do caso de teste
+        :param read_modes: Modos de leitura da imagem de entrada
+        :param sizes: Dimensões a serem consideradas
+        :param filters_min: Valor mínimo para os filtros da rede
+        :param filters_max: Valor máximo para os filtros da rede
         """
         pass
 
