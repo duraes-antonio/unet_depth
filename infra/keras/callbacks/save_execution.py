@@ -45,7 +45,7 @@ class ExecutionSave(keras.callbacks.Callback):
 
     def on_epoch_end(self, epoch_index: int, logs: Optional[TrainResult] = None):
         epoch = self.start_epoch + epoch_index
-        file_id = None
+        file_id = ''
 
         try:
             file_id = self.model_storage.save(self.filename)

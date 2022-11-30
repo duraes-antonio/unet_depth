@@ -1,13 +1,13 @@
 from typing import Tuple
 
 import cv2
-from numpy import ndarray, reshape
+from numpy import array, ndarray, reshape
 
 DEFAULT_HEIGHT = 256
 DEFAULT_SIZE = (DEFAULT_HEIGHT, DEFAULT_HEIGHT)
 
 
-def normalize_img(img: ndarray) -> ndarray:
+def normalize_img(img: array) -> ndarray:
     return (img - img.min()) / (img.max() - img.min())
 
 

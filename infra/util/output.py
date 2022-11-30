@@ -12,13 +12,14 @@ from infra.util.dataset import PathPairs
 
 def print_test_case(test_case: TestCase):
     title = '-' * 10 + 'PROCESSANDO CASO DE TESTE' + '-' * 10
+    test_config = test_case['config']
     output = f"""
 {title}
 ID:             {test_case['id']}
-Network:        {test_case['network']}
-Backbone:       {test_case['backbone']}
-Otimizador:     {test_case['optimizer']}
-Pesos imagenet: {test_case['use_imagenet_weights']}
+Network:        {test_config['network']}
+Backbone:       {test_config['backbone']}
+Otimizador:     {test_config['optimizer']}
+Pesos imagenet: {test_config['use_imagenet_weights']}
 {'-' * len(title)}
     """
     print(output)

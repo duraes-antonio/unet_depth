@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Union
+from typing import Union, Optional
 
 from bson import ObjectId
 
@@ -15,4 +15,4 @@ class TestCaseExecutionHistory(Entity):
     model_id: str
     gpu_description: str
     cpu_description: str
-    result: TrainResult
+    result: Optional[TrainResult]

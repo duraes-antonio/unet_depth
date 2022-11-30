@@ -3,33 +3,33 @@ from typing import Optional
 from keras_unet_collection import models
 from tensorflow import keras
 
-from domain.models.network import Networks, NetworkConfig
-from domain.models.test_case.test_case import TestCase
+from domain.models.network import Networks
+from domain.models.test_case.test_case import TestCaseConfig
 
 
 # Instanciar modelo com base no caso de teste
-def build_model(test_case: TestCase, network_config: NetworkConfig) -> Optional[keras.Model]:
-    backbone = (test_case['backbone']).value
-    network = test_case['network']
-    use_imagenet_weights = test_case['use_imagenet_weights']
-
+def build_model(test_case_config: TestCaseConfig) -> Optional[keras.Model]:
     n_labels = 1
-
     all_filter_num = [64, 128, 256, 512, 1024]
-    filter_min = network_config['filter_min']
-    filter_max = network_config['filter_max']
+    activation = 'ReLU'
+    out_activation = 'Sigmoid'
+    width, height = test_case_config['size'], test_case_config['size']
+    input_shape = width, height, 3
+    pool = True
+    unpool = True
+    batch_norm = True
+
+    backbone = (test_case_config['backbone']).value
+    network = test_case_config['network']
+    use_imagenet_weights = test_case_config['use_imagenet_weights']
+    weights = 'imagenet' if use_imagenet_weights else None
+
+    filter_min = test_case_config['filter_min']
+    filter_max = test_case_config['filter_max']
     filter_num = [
         f for f in all_filter_num
         if filter_min <= f <= filter_max
     ]
-    pool = network_config['pool']
-    unpool = network_config['unpool']
-    input_shape = network_config['size'], network_config['size'], 3
-
-    activation = 'ReLU'
-    out_activation = 'Sigmoid'
-    weights = 'imagenet' if use_imagenet_weights else None
-    batch_norm = True
 
     if network == Networks.UNet:
         return models.unet_2d(

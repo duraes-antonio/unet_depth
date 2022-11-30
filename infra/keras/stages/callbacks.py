@@ -3,8 +3,7 @@ from typing import List, Optional
 
 from tensorflow.keras.callbacks import EarlyStopping, TensorBoard, ModelCheckpoint, Callback
 
-from domain.models.network import NetworkConfig
-from domain.models.test_case.test_case import TestCase
+from domain.models.test_case.test_case import TestCase, TestCaseConfig
 from domain.models.test_case.test_case_execution_history import TestCaseExecutionHistory
 from domain.services.blob_storage_service import BlobStorageService
 from domain.services.model_storage_service import ModelStorageService
@@ -15,20 +14,23 @@ from infra.keras.callbacks.prepare_save_csv import PrepareSaveCSV
 from infra.keras.callbacks.save_execution import ExecutionSave
 
 
-def get_model_name(test_case: TestCase, config: NetworkConfig) -> str:
+def get_model_name(test_case_config: TestCaseConfig) -> str:
     """
     Obtém o nome do modelo (ex.: 'attention-unet_adam_resnet-101_imagenet-0') a partir de um caso de teste
-    :param config:
-    :param test_case: Casos de teste com as informações da execução
+    :param test_case_config:
     :return: Nome completo do modelo
     """
-    network = test_case['network'].value
-    optimizer = str(test_case['optimizer'].value).lower()
-    backbone = str(test_case['backbone'].value).lower()
-    use_image_net = int(test_case['use_imagenet_weights'])
-    min_filter = config['filter_min']
-    max_filter = config['filter_max']
-    return f'{network}_{optimizer}_{backbone}_imagenet-{use_image_net}_batch-4_f-{min_filter}-{max_filter}'
+    network = test_case_config['network'].value
+    optimizer = str(test_case_config['optimizer'].value).lower()
+    backbone = str(test_case_config['backbone'].value).lower()
+    use_image_net = int(test_case_config['use_imagenet_weights'])
+    min_filter = test_case_config['filter_min']
+    max_filter = test_case_config['filter_max']
+    size = test_case_config['size']
+    read_mode = test_case_config['read_mode']
+    network_config = f'n-{network}_o-{optimizer}_b-{backbone}_imagenet-{use_image_net}_f-{min_filter}-{max_filter}'
+    another_params = f's-{size}x{size}_r-{read_mode}_batch-4'
+    return f'{network_config}_{another_params}'
 
 
 def build_callbacks(
@@ -39,11 +41,11 @@ def build_callbacks(
         execution_service: TestCaseExecutionService,
         test_case_service: TestCaseService,
         result_service: ResultService,
-        network_config: NetworkConfig
+        network_config: TestCaseConfig
 ) -> List[Callback]:
     epoch = last_execution['epoch'] + 1 if last_execution else 1
 
-    trained_model_name = get_model_name(test_case, network_config)
+    trained_model_name = get_model_name(network_config)
     csv_log_name = f'{trained_model_name}.csv'
 
     tensorboard_log_path = "logs/fit/"

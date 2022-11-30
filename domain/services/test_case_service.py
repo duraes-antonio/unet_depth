@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from typing import Optional, Iterable
 
 from domain.models.network import Networks, KerasBackbone, Optimizers
-from domain.models.test_case.test_case import TestCase, TestCaseState
+from domain.models.test_case.test_case import TestCase, TestCaseState, TestCaseConfig
 
 
 class TestCaseService(ABC):
@@ -29,13 +29,15 @@ class TestCaseService(ABC):
     def populate(
             self, networks: Iterable[Networks],
             backbones: Iterable[KerasBackbone],
-            optimizers: Iterable[Optimizers]
+            optimizers: Iterable[Optimizers],
+            config: TestCaseConfig
     ) -> None:
         """
         Gera todas as combinações possíveis de casos de teste e os persiste
         :param networks: Conjunto de redes a serem usadas
         :param backbones: Conjunto de backbones a serem usados
         :param optimizers: Conjunto de otimizadores
+        :param config: Configuração do caso de teste
         """
         pass
 

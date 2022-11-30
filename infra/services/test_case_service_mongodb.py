@@ -1,13 +1,13 @@
 import os
 from datetime import datetime, timedelta
-from typing import Optional, Iterable, List
+from typing import Optional, Iterable
 
 from bson import ObjectId
 from dotenv import load_dotenv
 from pymongo import MongoClient
 
 from domain.models.network import Networks, KerasBackbone, Optimizers
-from domain.models.test_case.test_case import TestCase, TestCaseState
+from domain.models.test_case.test_case import TestCase, TestCaseState, TestCaseConfig, InputReadMode
 from domain.services.test_case_service import TestCaseService
 
 load_dotenv()
@@ -20,7 +20,6 @@ class TestCaseServiceMongoDB(TestCaseService):
         self.db = self.db_client[db_name]
         self.db_name = db_name
         self.collection = self.db['test_cases']
-        self.__populate_if_empty__()
 
     def get(self, _id: str) -> TestCase:
         test_case = self.collection.find_one(ObjectId(_id))
@@ -56,25 +55,36 @@ class TestCaseServiceMongoDB(TestCaseService):
             networks: Iterable[Networks],
             backbones: Iterable[KerasBackbone],
             optimizers: Iterable[Optimizers],
+            read_modes: Iterable[InputReadMode],
+            use_imagenet_weights: Iterable[bool] = (True, False),
+            sizes: Iterable[int] = (256, 512),
+            filters_min: Iterable[int] = (64,),
+            filters_max: Iterable[int] = (512, 1024),
     ) -> None:
-        use_imagenet_weights = [False, True]
-        test_cases: List[TestCase] = []
         initial_state = TestCaseState.Available
-        combinations = (
-            (net, back, opt, use_imgnet_weight)
+        test_case_configs: Iterable[dict] = [
+            TestCaseConfig(
+                network=net.value, backbone=back.value, optimizer=opt.value,
+                use_imagenet_weights=use_imagenet, size=size,
+                filter_min=f_min, filter_max=f_max, read_mode=read.value
+            )
             for net in networks
             for back in backbones
             for opt in optimizers
-            for use_imgnet_weight in use_imagenet_weights
-        )
+            for read in read_modes
+            for use_imagenet in use_imagenet_weights
+            for size in sizes
+            for f_min in filters_min
+            for f_max in filters_max
+        ]
 
-        for net, back, opt, use_imgnet in combinations:
-            test_case = TestCase(
-                network=net.value, backbone=back.value, optimizer=opt.value,
+        test_cases: Iterable[TestCase] = [
+            TestCase(
                 created_at=datetime.utcnow(), state=initial_state.value,
-                use_imagenet_weights=use_imgnet,
+                config=config, last_modified=None
             )
-            test_cases.append(test_case)
+            for config in test_case_configs
+        ]
         self.collection.insert_many(test_cases)
 
     def update_state(self, _id: str, state: TestCaseState) -> TestCase:
@@ -91,30 +101,24 @@ class TestCaseServiceMongoDB(TestCaseService):
     def remove_all(self):
         self.collection.delete_many({})
 
-    def __populate_if_empty__(self):
-        if self.get_first_available():
-            return
-
-        networks = [Networks.UNet, Networks.AttentionUNet, Networks.TransUNet]
-        optimizers = [Optimizers.Adam]
-        backbones = [KerasBackbone.ResNet50, KerasBackbone.ResNet101]
-
-        self.remove_all()
-        self.populate(networks, backbones, optimizers)
-
     @staticmethod
     def __dict_to_object__(dict_instance: TestCase) -> TestCase:
         if not dict_instance:
             return dict_instance
 
         dict_instance['last_modified'] = dict_instance['last_modified'] if 'last_modified' in dict_instance else None
+        config_in: dict = dict_instance['config']
+        config_out = TestCaseConfig(
+            **config_in,
+            network=Networks(config_in['network']),
+            backbone=KerasBackbone(config_in['backbone']),
+            optimizer=Optimizers(config_in['optimizer']),
+            read_mode=InputReadMode(config_in['read_mode']),
+        )
         return TestCase(
-            network=Networks(dict_instance['network']),
-            backbone=KerasBackbone(dict_instance['backbone']),
-            optimizer=Optimizers(dict_instance['optimizer']),
+            id=dict_instance['_id'],
+            config=config_out,
             state=TestCaseState(dict_instance['state']),
             created_at=dict_instance['created_at'],
-            use_imagenet_weights=dict_instance['use_imagenet_weights'],
             last_modified=dict_instance['last_modified'],
-            id=dict_instance['_id'],
         )
