@@ -27,7 +27,7 @@ def get_model_name(test_case_config: TestCaseConfig) -> str:
     min_filter = test_case_config['filter_min']
     max_filter = test_case_config['filter_max']
     size = test_case_config['size']
-    read_mode = test_case_config['read_mode']
+    read_mode = test_case_config['read_mode'].value
     network_config = f'n-{network}_o-{optimizer}_b-{backbone}_imagenet-{use_image_net}_f-{min_filter}-{max_filter}'
     another_params = f's-{size}x{size}_r-{read_mode}_batch-4'
     return f'{network_config}_{another_params}'
