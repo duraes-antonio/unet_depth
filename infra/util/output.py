@@ -19,6 +19,10 @@ ID:             {test_case['id']}
 Network:        {test_config['network']}
 Backbone:       {test_config['backbone']}
 Otimizador:     {test_config['optimizer']}
+Filter Min.:    {test_config['filter_min']}
+Filter Max.:    {test_config['filter_max']}
+Size (w x h):   {test_config['size']}
+Read-mode:      {test_config['read_mode']}
 Pesos imagenet: {test_config['use_imagenet_weights']}
 {'-' * len(title)}
     """
