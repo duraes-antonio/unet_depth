@@ -107,13 +107,16 @@ class TestCaseServiceMongoDB(TestCaseService):
             return dict_instance
 
         dict_instance['last_modified'] = dict_instance['last_modified'] if 'last_modified' in dict_instance else None
-        config_in: dict = dict_instance['config']
+        config_in = dict_instance['config']
         config_out = TestCaseConfig(
-            **config_in,
             network=Networks(config_in['network']),
             backbone=KerasBackbone(config_in['backbone']),
             optimizer=Optimizers(config_in['optimizer']),
             read_mode=InputReadMode(config_in['read_mode']),
+            filter_min=config_in['filter_min'],
+            filter_max=config_in['filter_max'],
+            size=config_in['size'],
+            use_imagenet_weights=config_in['use_imagenet_weights'],
         )
         return TestCase(
             id=dict_instance['_id'],
