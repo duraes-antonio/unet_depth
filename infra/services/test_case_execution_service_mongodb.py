@@ -30,4 +30,5 @@ class TestCaseExecutionServiceMongoDB(TestCaseExecutionService):
             {'test_case_id': test_case_id},
             sort=[('created_at', pymongo.DESCENDING)]
         )
+        test_case['id'] = test_case['_id']
         return test_case
