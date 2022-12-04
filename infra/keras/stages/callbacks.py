@@ -65,7 +65,7 @@ def build_callbacks(
         blob_storage, result_service, csv_log_name, test_case['id']
     )
     return [
-        EarlyStopping(monitor='val_loss', patience=5, mode='min', restore_best_weights=True),
+        EarlyStopping(monitor='val_loss', patience=10, mode='min', restore_best_weights=True),
         prepare_and_save_csv,
         model_checkpoint,
         save_execution,
