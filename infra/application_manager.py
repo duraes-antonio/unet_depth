@@ -93,56 +93,62 @@ class ApplicationManager:
     def run(self, train_data_path: str, test_data_path: str) -> None:
         test_case = self.__test_case_service__.get_first_available()
 
-        while test_case is not None:
-            print_test_case(test_case)
-            test_case_id = test_case['id']
-            test_config = test_case['config']
+        try:
+            while test_case is not None:
+                print_test_case(test_case)
+                test_case_id = test_case['id']
+                test_config = test_case['config']
 
-            self.__test_case_service__.update_state(
-                test_case['id'], TestCaseState.Busy
-            )
-            print(f'Caso de teste marcado como ocupado! ID: {test_case_id}')
+                self.__test_case_service__.update_state(
+                    test_case['id'], TestCaseState.Busy
+                )
+                print(f'Caso de teste marcado como ocupado! ID: {test_case_id}')
 
-            # Buscar última execução do caso de teste
-            last_execution = self.__execution_service__.get_last_execution(
-                test_case['id']
-            )
-            print(f"Última execução do casos de teste: {last_execution['id'] if last_execution else None}")
+                # Buscar última execução do caso de teste
+                last_execution = self.__execution_service__.get_last_execution(
+                    test_case['id']
+                )
 
-            model_name = get_model_name(test_config)
+                if last_execution:
+                    print(f"Última execução do casos de teste: {last_execution['id']}")
 
-            # Buscar o blob do último modelo atualizado
-            if last_execution and last_execution['model_id']:
-                model_id = last_execution['model_id']
-                model_name = last_execution['model_name']
-                print(f"""\nModelo treinado encontrado:\nID:   {model_id}\nNome: {model_name}\n""")
-                self.model = self.__get_trained_model__(model_id, model_name)
+                model_name = get_model_name(test_config)
 
-            else:
-                print('Iniciado: build do modelo')
-                self.model = build_model(test_config)
-                print('Finalizado: build do modelo')
+                # Buscar o blob do último modelo atualizado
+                if last_execution:
+                    model_id = last_execution['model_id']
+                    model_name = last_execution['model_name']
+                    print(f"""\nModelo treinado encontrado:\nID:   {model_id}\nNome: {model_name}\n""")
+                    self.model = self.__get_trained_model__(model_id, model_name)
 
-                optimizer = str(test_config['optimizer'].value).lower()
+                else:
+                    print('Iniciado: build do modelo')
+                    self.model = build_model(test_config)
+                    print('Finalizado: build do modelo')
 
-                print('Iniciado: compilação do modelo')
-                self.model.compile(loss=depth_loss, metrics=all_metrics, optimizer=optimizer)
-                print('Finalizado compilação do modelo')
+                    optimizer = str(test_config['optimizer'].value).lower()
 
-            print('Iniciado: treinamento')
-            self.__train__(train_data_path, test_case, last_execution)
-            print('Finalizado: treinamento')
+                    print('Iniciado: compilação do modelo')
+                    self.model.compile(loss=depth_loss, metrics=all_metrics, optimizer=optimizer)
+                    print('Finalizado compilação do modelo')
 
-            print('Iniciado: teste')
-            self.__test__(model_name, test_data_path, test_config)
-            print('Finalizado: teste')
+                print('Iniciado: treinamento')
+                self.__train__(train_data_path, test_case, last_execution)
+                print('Finalizado: treinamento')
 
-            self.__test_case_service__.update_state(test_case['id'], TestCaseState.Done)
-            print(f"Caso de teste finalizado! ID {test_case_id}")
+                print('Iniciado: teste')
+                self.__test__(model_name, test_data_path, test_config)
+                print('Finalizado: teste')
 
-            test_case = self.__test_case_service__.get_first_available()
-            del self.model
-            tf.keras.backend.clear_session()
-            gc.collect()
+                self.__test_case_service__.update_state(test_case['id'], TestCaseState.Done)
+                print(f"Caso de teste finalizado! ID {test_case_id}")
+
+                test_case = self.__test_case_service__.get_first_available()
+                del self.model
+                tf.keras.backend.clear_session()
+                gc.collect()
+
+        except Exception as ex:
+            raise ex
 
         print('Não há casos de testes para executar!')
