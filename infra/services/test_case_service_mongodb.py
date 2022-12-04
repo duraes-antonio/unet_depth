@@ -26,7 +26,7 @@ class TestCaseServiceMongoDB(TestCaseService):
         return self.__dict_to_object__(test_case)
 
     def get_first_available(self) -> Optional[TestCase]:
-        one_hour_ago = datetime.utcnow() - timedelta(hours=1)
+        two_hour_ago = datetime.utcnow() - timedelta(hours=2)
         query = {
             '$or': [
                 {'state': TestCaseState.Available.value},
@@ -37,7 +37,7 @@ class TestCaseServiceMongoDB(TestCaseService):
                             '$and': [
                                 {
                                     'last_modified': {
-                                        '$lte': one_hour_ago
+                                        '$lte': two_hour_ago
                                     },
                                 },
                                 {'state': TestCaseState.Busy.value}
