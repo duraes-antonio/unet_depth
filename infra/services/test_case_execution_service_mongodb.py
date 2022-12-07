@@ -26,9 +26,11 @@ class TestCaseExecutionServiceMongoDB(TestCaseExecutionService):
         return result
 
     def get_last_execution(self, test_case_id: str) -> Optional[TestCaseExecutionHistory]:
-        test_case: TestCaseExecutionHistory = self.collection.find_one(
+        last_execution: TestCaseExecutionHistory = self.collection.find_one(
             {'test_case_id': test_case_id},
             sort=[('created_at', pymongo.DESCENDING)]
         )
-        test_case['id'] = test_case['_id']
-        return test_case
+
+        if last_execution:
+            last_execution['id'] = last_execution['_id']
+        return last_execution
