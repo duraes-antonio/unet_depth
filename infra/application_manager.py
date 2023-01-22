@@ -85,7 +85,7 @@ class ApplicationManager:
         read_mode = test_config['read_mode']
 
         self.test_generator = NyuV2Generator(
-            test_path_pairs, batch_size=self.__batch_size__, shuffle=False,
+            test_path_pairs, batch_size=1, shuffle=False,
             seed=self.__seed__, image_size=size, read_mode=read_mode
         )
         evaluate(self.model, self.test_generator, self.__blob_storage__, model_name + '.csv')
